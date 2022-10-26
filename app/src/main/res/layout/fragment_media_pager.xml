@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<import type="android.view.View" />
+
+		<variable
+			name="handler"
+			type="com.karthek.android.s.gallery.ui.pager.MediaPagerFragment.Handlers" />
+
+		<variable
+			name="sMedia"
+			type="com.karthek.android.s.gallery.state.db.SMedia" />
+	</data>
+
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
+		android:id="@+id/pager_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".ui.pager.MediaPagerFragment">
+
+		<androidx.viewpager2.widget.ViewPager2
+			android:id="@+id/viewpager_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:keepScreenOn="true" />
+
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:fitsSystemWindows="true"
+			app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
+
+			<HorizontalScrollView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom"
+				android:background="@color/colorMainBackGround"
+				android:scrollbars="none"
+				tools:ignore="UselessParent">
+
+				<LinearLayout
+					android:id="@+id/fullscreen_content_controls"
+					style="@style/Widget.Theme.Gallery.ButtonBar.Fullscreen"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom"
+					android:orientation="horizontal"
+					android:padding="8dp"
+					tools:ignore="UselessParent">
+
+					<TextView
+						android:id="@+id/button_action_share"
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:onClick="@{()->handler.shareHandler(sMedia) }"
+						android:text="@string/share"
+						app:drawableTopCompat="@drawable/ic_share" />
+
+					<TextView
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/edit"
+						app:drawableTopCompat="@drawable/ic_edit" />
+
+					<TextView
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/delete"
+						app:drawableTopCompat="@drawable/ic_delete" />
+
+					<TextView
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:onClick="@{()->handler.useAsHandler(sMedia) }"
+						android:text="@string/use_as"
+						android:visibility="@{sMedia.isVideo ? View.GONE : View.VISIBLE}"
+						app:drawableTopCompat="@drawable/ic_useas" />
+
+					<TextView
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:onClick="@{()->handler.printHandler(sMedia)}"
+						android:text="@string/print"
+						android:visibility="@{sMedia.isVideo ? View.GONE : View.VISIBLE}"
+						app:drawableTopCompat="@drawable/ic_print" />
+
+					<TextView
+						style="@style/BlackSanUI.media_actions"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/slideshow"
+						app:drawableTopCompat="@drawable/ic_slideshow" />
+
+				</LinearLayout>
+			</HorizontalScrollView>
+		</FrameLayout>
+
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<variable
+			name="viewModel"
+			type="com.karthek.android.s.gallery.ui.players.VideoPlayerActivityViewModel" />
+	</data>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".ui.players.VideoPlayerActivity">
+
+		<com.google.android.exoplayer2.ui.StyledPlayerView
+			android:id="@+id/video_player_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:keepScreenOn="true"
+			app:animation_enabled="false"
+			app:controller_layout_id="@layout/full_exo_styled_player_control_view"
+			app:show_next_button="false"
+			app:show_previous_button="false"
+			app:show_subtitle_button="true"
+			app:show_vr_button="true" />
+
+		<ImageView
+			android:id="@+id/controller_lock_open"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_margin="32dp"
+			android:contentDescription="@string/lock_controls"
+			android:onClick="toggle_controller_lock"
+			android:visibility="gone"
+			app:srcCompat="@drawable/ic_lock_open" />
+
+	</FrameLayout>
+</layout>

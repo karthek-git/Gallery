@@ -1,0 +1,52 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+	<!-- Base application theme. -->
+	<style name="Theme.Gallery" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+		<!-- Primary brand color. -->
+		<item name="colorPrimary">#8AB4F8</item>
+		<item name="colorPrimaryVariant">@color/purple_700</item>
+		<item name="colorOnPrimary">@color/black</item>
+		<!-- Secondary brand color. -->
+		<item name="colorSecondary">@color/teal_200</item>
+		<item name="colorSecondaryVariant">@color/teal_200</item>
+		<item name="colorOnSecondary">@color/black</item>
+		<!-- Status bar color. -->
+		<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+		<!-- Customize your theme here. -->
+	</style>
+
+	<style name="ThemeOverlay.Gallery.FullscreenContainer" parent="">
+		<item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+		<item name="fullscreenTextColor">@color/light_blue_A400</item>
+	</style>
+
+	<style name="BlackSanUI" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+		<item name="colorPrimary">#8AB4F8</item>
+
+		<item name="windowActionBarOverlay">true</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="actionBarStyle">@style/BlackSanUI.ActionBar</item>
+		<item name="actionModeBackground">@color/black</item>
+		<item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
+		<item name="actionModeCloseDrawable">@drawable/ic_cab_close</item>
+		<item name="android:windowBackground">@android:color/black</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+		<item name="android:windowActivityTransitions">true</item>
+		<item name="alertDialogTheme">@style/BlackSanUI.Dialog</item>
+	</style>
+
+	<style name="BlackSanUI.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+		<item name="windowNoTitle">true</item>
+		<item name="android:background">@color/colorLiiDark</item>
+		<item name="dialogCornerRadius">14dp</item>
+		<item name="android:windowSoftInputMode">stateVisible</item>
+		<item name="android:windowAnimationStyle">@style/BlackSanUI_Dialog_show</item>
+	</style>
+
+	<style name="BlackSanUI_Dialog_show">
+		<item name="android:windowEnterAnimation">@null</item>
+	</style>
+
+	<style name="BlackSanUI.Fullscreen" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+		<item name="android:windowFullscreen">true</item>
+	</style>
+</resources>

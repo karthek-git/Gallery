@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<import type="android.view.View" />
+
+		<variable
+			name="viewModel"
+			type="com.karthek.android.s.gallery.state.ImageInfoViewModel" />
+	</data>
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_margin="8dp">
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingStart="8dp"
+			android:paddingEnd="8dp"
+			android:paddingBottom="32dp"
+			android:text="@string/details"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/barrier3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:barrierDirection="bottom"
+			app:constraint_referenced_ids="textView2"
+			tools:layout_editor_absoluteY="823dp" />
+
+		<ImageView
+			android:id="@+id/imageView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:padding="8dp"
+			app:layout_constraintBottom_toBottomOf="@+id/textView_path"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textView_album_name"
+			app:srcCompat="@drawable/ic_albums" />
+
+		<TextView
+			android:id="@+id/textView_album_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"
+			android:text="@{viewModel.album}"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/imageView2"
+			app:layout_constraintTop_toBottomOf="@id/barrier3" />
+
+		<TextView
+			android:id="@+id/textView_path"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="12dp"
+			android:text="@{viewModel.path}"
+			app:layout_constraintEnd_toEndOf="@+id/textView_album_name"
+			app:layout_constraintStart_toStartOf="@+id/textView_album_name"
+			app:layout_constraintTop_toBottomOf="@+id/textView_album_name" />
+
+		<androidx.constraintlayout.widget.Group
+			android:id="@+id/group2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:constraint_referenced_ids="imageView2,textView_album_name,textView_path" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/barrier4"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:barrierDirection="bottom"
+			app:constraint_referenced_ids="imageView2,textView_album_name,textView_path"
+			tools:layout_editor_absoluteY="823dp" />
+
+		<ImageView
+			android:id="@+id/imageView3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:padding="8dp"
+			app:layout_constraintBottom_toBottomOf="@+id/textView_last_modified"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textView_taken_date"
+			app:srcCompat="@drawable/ic_calender" />
+
+		<TextView
+			android:id="@+id/textView_taken_date"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:layout_marginEnd="8dp"
+			android:text="@{viewModel.takenDate}"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/imageView3"
+			app:layout_constraintTop_toBottomOf="@id/barrier4" />
+
+		<TextView
+			android:id="@+id/textView_last_modified"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			android:text="@{viewModel.modifiedDate}"
+			app:layout_constraintEnd_toEndOf="@+id/textView_taken_date"
+			app:layout_constraintStart_toStartOf="@+id/textView_taken_date"
+			app:layout_constraintTop_toBottomOf="@+id/textView_taken_date" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/barrier5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:barrierDirection="bottom"
+			app:constraint_referenced_ids="imageView3,textView_taken_date,textView_last_modified"
+			tools:layout_editor_absoluteY="823dp" />
+
+		<ImageView
+			android:id="@+id/imageView4"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:padding="8dp"
+			app:layout_constraintBottom_toBottomOf="@+id/textView_size"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textView_name"
+			app:srcCompat="@drawable/ic_photos" />
+
+		<TextView
+			android:id="@+id/textView_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="33dp"
+			android:layout_marginEnd="8dp"
+			android:text="@{viewModel.name}"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/imageView4"
+			app:layout_constraintTop_toBottomOf="@id/barrier5" />
+
+		<TextView
+			android:id="@+id/textView_size"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="@{viewModel.size}"
+			app:layout_constraintEnd_toEndOf="@+id/textView_name"
+			app:layout_constraintStart_toStartOf="@+id/textView_name"
+			app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+
+		<androidx.constraintlayout.widget.Barrier
+			android:id="@+id/barrier7"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:barrierDirection="bottom"
+			app:constraint_referenced_ids="imageView4,textView_name,textView_size"
+			tools:layout_editor_absoluteY="823dp" />
+
+		<ImageView
+			android:id="@+id/imageView5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:padding="8dp"
+			app:layout_constraintBottom_toBottomOf="@+id/textView10"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/textView_oem"
+			app:srcCompat="@drawable/ic_camera" />
+
+		<TextView
+			android:id="@+id/textView_oem"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="20dp"
+			android:layout_marginEnd="8dp"
+			android:text="@{viewModel.oem}"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/imageView5"
+			app:layout_constraintTop_toBottomOf="@id/barrier7" />
+
+		<TextView
+			android:id="@+id/textView10"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="@{viewModel.params}"
+			app:layout_constraintEnd_toEndOf="@+id/textView_oem"
+			app:layout_constraintStart_toStartOf="@+id/textView_oem"
+			app:layout_constraintTop_toBottomOf="@+id/textView_oem" />
+
+		<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_begin="594dp" />
+
+		<androidx.constraintlayout.widget.Group
+			android:id="@+id/group"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:visibility="@{viewModel.visibility ? View.VISIBLE:View.GONE}"
+			app:constraint_referenced_ids="textView_oem,textView10,imageView5" />
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

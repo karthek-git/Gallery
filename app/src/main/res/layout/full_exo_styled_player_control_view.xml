@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".ui.players.VideoPlayerActivity">
+
+
+	<ImageView
+		android:id="@+id/exo_play_pause"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:contentDescription="@string/exo_controls_pause_description"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@drawable/ic_pause_button" />
+
+	<ImageView
+		android:id="@+id/exo_rew"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="32dp"
+		android:layout_height="32dp"
+		android:contentDescription="@string/exo_controls_rewind_description"
+		app:layout_constraintBottom_toBottomOf="@+id/exo_play_pause"
+		app:layout_constraintEnd_toStartOf="@+id/exo_play_pause"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/exo_play_pause"
+		app:srcCompat="@drawable/ic_fast_rewind" />
+
+	<ImageView
+		android:id="@+id/exo_ffwd"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="32dp"
+		android:layout_height="32dp"
+		android:contentDescription="@string/exo_controls_fastforward_description"
+		app:layout_constraintBottom_toBottomOf="@+id/exo_play_pause"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/exo_play_pause"
+		app:layout_constraintTop_toTopOf="@+id/exo_play_pause"
+		app:srcCompat="@drawable/ic_fast_forward" />
+
+	<com.google.android.exoplayer2.ui.DefaultTimeBar
+		android:id="@+id/exo_progress"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
+		android:layout_marginEnd="8dp"
+		app:buffered_color="@color/color_unplayed"
+		app:layout_constraintBottom_toTopOf="@+id/exo_position"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent"
+		tools:layout_height="24dp" />
+
+	<TextView
+		android:id="@+id/exo_position"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginBottom="16dp"
+		app:layout_constraintBottom_toTopOf="@+id/toggle_controller_lock"
+		app:layout_constraintStart_toStartOf="@+id/exo_progress"
+		tools:text="0:00" />
+
+	<TextView
+		android:id="@+id/exo_duration"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="8dp"
+		android:layout_marginBottom="16dp"
+		app:layout_constraintBottom_toTopOf="@+id/toggle_controller_lock"
+		app:layout_constraintEnd_toEndOf="@+id/exo_progress"
+		app:layout_constraintTop_toTopOf="@+id/exo_position"
+		tools:text="1:00" />
+
+	<ImageView
+		android:id="@+id/control_fullscreen"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:contentDescription="@string/exo_controls_fullscreen_enter_description"
+		android:onClick="control_fullscreen"
+		app:layout_constraintBottom_toTopOf="@+id/exo_progress"
+		app:layout_constraintEnd_toEndOf="@+id/exo_progress"
+		app:srcCompat="@drawable/ic_fullscreen_enter" />
+
+	<ImageView
+		android:id="@+id/capture_frame"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="16dp"
+		android:contentDescription="@string/capture_frame"
+		android:onClick="capture_frame"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@drawable/ic_capture_frame" />
+
+	<ImageView
+		android:id="@+id/exo_subtitle"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="16dp"
+		android:layout_marginTop="15dp"
+		android:contentDescription="@string/exo_controls_cc_enabled_description"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@drawable/ic_subtitles" />
+
+	<ImageView
+		android:id="@+id/toggle_controller_lock"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:contentDescription="@string/lock_controls"
+		android:onClick="toggle_controller_lock"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="@+id/exo_position"
+		app:layout_constraintStart_toStartOf="@+id/exo_position"
+		app:srcCompat="@drawable/ic_lock" />
+
+	<ImageView
+		android:id="@+id/mute_control"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:contentDescription="@string/mute"
+		android:onClick="toggle_mute"
+		app:layout_constraintBottom_toTopOf="@+id/exo_progress"
+		app:layout_constraintStart_toStartOf="@+id/exo_progress"
+		app:srcCompat="@drawable/ic_volume_full" />
+
+	<ImageView
+		android:id="@+id/pip_button"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:contentDescription="@string/description_pip"
+		android:onClick="enter_pip"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="@+id/exo_duration"
+		app:layout_constraintStart_toStartOf="@+id/exo_duration"
+		app:srcCompat="@drawable/ic_pip" />
+
+	<ImageView
+		android:id="@+id/exo_vr"
+		style="@style/BlackSanUI.player_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="16dp"
+		android:contentDescription="@string/exo_controls_vr_description"
+		app:layout_constraintBottom_toBottomOf="@+id/exo_subtitle"
+		app:layout_constraintEnd_toStartOf="@+id/exo_subtitle"
+		app:layout_constraintTop_toTopOf="@+id/exo_subtitle"
+		app:srcCompat="@drawable/ic_vrpano" />
+
+	<TextView
+		android:id="@+id/video_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="16dp"
+		android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+		app:layout_constraintEnd_toStartOf="@+id/exo_vr"
+		app:layout_constraintStart_toEndOf="@+id/capture_frame"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="TextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

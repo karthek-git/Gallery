@@ -1,0 +1,40 @@
+<resources>
+	<string name="app_name">Gallery</string>
+
+	<string name="title_activity_media_view">Media Viewer</string>
+	<string name="title_activity_mactivity">MActivity</string>
+	<string name="title_activity_audio_player">Play</string>
+	<string name="title_activity_manual_work_trigger">ManualWorkTriggerActivity</string>
+	<string name="title_activity_settings">SettingsActivity</string>
+	<string name="title_activity_licenses">LicensesActivity</string>
+
+	<string name="title_home">Home</string>
+	<string name="title_dashboard">Dashboard</string>
+	<string name="title_notifications">Notifications</string>
+	<string name="title_photos">Photos</string>
+	<string name="albums">Albums</string>
+	<string name="share">Share</string>
+	<string name="audio">Audio</string>
+	<string name="toggle_playback">Toggle playback</string>
+	<string name="album_art">Album art</string>
+	<string name="play">Play</string>
+	<string name="video_player">Video player</string>
+	<string name="album">Album</string>
+	<string name="go_back">Go Back</string>
+	<string name="more">More options</string>
+	<string name="delete">Delete</string>
+	<string name="add">Add</string>
+	<string name="date">date</string>
+	<string name="details">Details</string>
+	<string name="unk">Unknown</string>
+	<string name="edit">Edit</string>
+	<string name="use_as">Use as</string>
+	<string name="print">Print</string>
+	<string name="slideshow">Slideshow</string>
+	<string name="capture_frame">Capture frame</string>
+	<string name="lock_controls">Lock controls</string>
+	<string name="mute">Mute</string>
+	<string name="description_pip">Picture in picture mode</string>
+	<string name="explore">Explore</string>
+
+</resources>

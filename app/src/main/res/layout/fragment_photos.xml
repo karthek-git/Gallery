@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/con"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_margin="0.5dp">
+
+
+	<ImageView
+		android:id="@+id/photo"
+		android:layout_width="fill_parent"
+		android:layout_height="118dp"
+		android:foreground="@color/lsview_state"
+		android:contentDescription="@string/title_photos"
+		android:scaleType="centerCrop"
+		android:src="@color/cardview_dark_background" />
+
+</LinearLayout>
