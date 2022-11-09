@@ -2,16 +2,28 @@ package com.karthek.android.s.gallery.model
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.karthek.android.s.gallery.ml.EfficientnetLite0Int82
+import com.karthek.android.s.gallery.ml.EfficientnetLite2Uint82
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.model.Model
+import org.tensorflow.lite.task.core.BaseOptions
+import org.tensorflow.lite.task.vision.classifier.ImageClassifier
+import org.tensorflow.lite.task.vision.classifier.ImageClassifier.ImageClassifierOptions
+
 
 class Classify(context: Context) {
-	val model: EfficientnetLite0Int82
+	private val model: EfficientnetLite2Uint82
+	private val imageSceneClassifier: ImageClassifier
 
 	init {
 		val options = Model.Options.Builder().setDevice(Model.Device.NNAPI).build()
-		model = EfficientnetLite0Int82.newInstance(context, options)
+		model = EfficientnetLite2Uint82.newInstance(context, options)
+		val sceneImageClassifierOptions = ImageClassifierOptions.builder()
+			.setBaseOptions(BaseOptions.builder().build())
+			.setMaxResults(1)
+			.build()
+		imageSceneClassifier = ImageClassifier.createFromFileAndOptions(context,
+			"image_scene_uint8_1.tflite",
+			sceneImageClassifierOptions)
 	}
 
 	protected fun finalize() {
@@ -19,9 +31,20 @@ class Classify(context: Context) {
 	}
 
 	fun getCategory(bitmap: Bitmap): String {
-		val outputs = model.process(TensorImage.fromBitmap(bitmap))
+		val tensorImage = TensorImage.fromBitmap(bitmap)
+		val outputs = model.process(tensorImage)
 		val probability =
-			outputs.probabilityAsCategoryList.filter { category -> category.score > 0.5f }
-		return StringBuilder().apply { probability.forEach { p -> append(p.label) } }.toString()
+			outputs.probabilityAsCategoryList.filter { category -> category.score > 0.05f }
+		return StringBuilder().apply { probability.forEach { p -> append(p.label) } }
+			.append(getSceneCategory(tensorImage))
+			.toString()
+	}
+
+	fun getSceneCategory(tensorImage: TensorImage): String {
+		return imageSceneClassifier.classify(tensorImage)[0].categories
+			.maxBy { category -> category.score }
+			.label
 	}
 }
+
+const val CLASSIFY_ML_VERSION = 1

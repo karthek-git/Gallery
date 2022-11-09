@@ -29,10 +29,7 @@ class SMediaIconFetcher(private val options: Options, private val sMedia: SMedia
 			)
 		}
 		val b = bitmap.getOrThrow()
-		/*Log.v(
-			TAG,
-			"fetch $type: (${pixelSize.width},${pixelSize.height}) ; (${b.width},${b.height})"
-		)*/
+		//todo svg support
 		return DrawableResult(b.toDrawable(options.context.resources), true, DataSource.DISK)
 	}
 
@@ -49,7 +46,6 @@ class SMediaIconFetcher(private val options: Options, private val sMedia: SMedia
 
 class SMediaIconKeyer : Keyer<SMedia> {
 	override fun key(data: SMedia, options: Options): String {
-		// Log.v(TAG, "key ${data.file.path}:${data.modified}")
 		return data.uri?.toString() ?: "${data.path}:${data.date}"
 	}
 }

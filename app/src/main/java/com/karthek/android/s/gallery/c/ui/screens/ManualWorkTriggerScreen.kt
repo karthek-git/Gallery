@@ -22,7 +22,7 @@ import com.karthek.android.s.gallery.c.state.ManualWorkTriggerViewModel
 import com.karthek.android.s.gallery.workers.PROGRESS_TAG
 
 @Composable
-fun ManualWorkTriggerScreen(viewModel: ManualWorkTriggerViewModel= viewModel()) {
+fun ManualWorkTriggerScreen(viewModel: ManualWorkTriggerViewModel = viewModel()) {
 	ManualWorkTriggerScreenContent(
 		viewModel.classifyProgress,
 		viewModel::onTriggerClick,
@@ -40,7 +40,8 @@ fun ManualWorkTriggerScreenContent(
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		val classifyWorkData by workProgress.observeAsState()
-		val classifying = !(classifyWorkData.isNullOrEmpty())
+		val classifying = !((classifyWorkData.isNullOrEmpty())
+				|| (classifyWorkData!![0].state == WorkInfo.State.ENQUEUED))
 		if (!classifying) {
 			Text("Click TRIGGER to run classify work manually")
 			Spacer(modifier = Modifier.height(32.dp))

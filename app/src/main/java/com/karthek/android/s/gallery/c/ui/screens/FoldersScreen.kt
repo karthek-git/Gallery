@@ -12,13 +12,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.c.a.MFolder
 import com.karthek.android.s.gallery.c.state.SMViewModel
 
@@ -26,7 +30,7 @@ import com.karthek.android.s.gallery.c.state.SMViewModel
 fun FoldersScreen(
 	viewModel: SMViewModel,
 	paddingValues: PaddingValues,
-	callback: (i: Int) -> Unit
+	callback: (i: Int) -> Unit,
 ) {
 	FoldersScreenContent(viewModel.folderList, paddingValues, callback)
 }
@@ -35,7 +39,7 @@ fun FoldersScreen(
 fun FoldersScreenContent(
 	folderList: List<MFolder>?,
 	paddingValues: PaddingValues,
-	callback: (i: Int) -> Unit
+	callback: (i: Int) -> Unit,
 ) {
 	if (folderList == null) {
 		ContentLoading()
@@ -48,7 +52,7 @@ fun FoldersScreenContent(
 fun FoldersGrid(
 	folderList: List<MFolder>,
 	paddingValues: PaddingValues,
-	callback: (i: Int) -> Unit
+	callback: (i: Int) -> Unit,
 ) {
 	LazyVerticalGrid(
 		columns = GridCells.Adaptive(150.dp),
@@ -61,6 +65,7 @@ fun FoldersGrid(
 	}
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
 	Column(modifier = Modifier
@@ -68,7 +73,7 @@ fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
 		.clickable { callback(index) }) {
 		AsyncImage(
 			model = ImageRequest.Builder(LocalContext.current)
-				.data(folder.previewImage)
+				.data(folder.previewSMedia)
 				.build(),
 			contentDescription = "",
 			modifier = Modifier
@@ -79,8 +84,17 @@ fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
 		)
 		Text(
 			text = folder.name,
-			modifier = Modifier.padding(4.dp),
-			style = MaterialTheme.typography.bodyLarge
+			modifier = Modifier.padding(top = 4.dp),
+			style = MaterialTheme.typography.labelLarge
+		)
+		Text(
+			text = pluralStringResource(
+				id = R.plurals.items,
+				count = folder.numItems,
+				folder.numItems),
+			style = MaterialTheme.typography.labelSmall,
+			color = MaterialTheme.colorScheme.onSurfaceVariant,
+			fontWeight = FontWeight.Normal
 		)
 	}
 }

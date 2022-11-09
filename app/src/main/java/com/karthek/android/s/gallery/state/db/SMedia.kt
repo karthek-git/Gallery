@@ -36,10 +36,18 @@ data class SMedia(
 	var isHeader = -1
 
 	constructor(
-		id: Int, uri: Uri, path: String, name: String, date: Long, isVideo: Boolean, orig_pos: Int
+		id: Int, uri: Uri, path: String, name: String, date: Long, isVideo: Boolean, orig_pos: Int,
 	) : this(id, name, path, date, isVideo, null) {
 		this.uri = uri
 		this.origPos = orig_pos
+	}
+
+	constructor(
+		uri: Uri,
+		path: String,
+		isVideo: Boolean,
+	) : this(0, "", path, 0, isVideo, null) {
+		this.uri = uri
 	}
 
 	constructor(isHeader: Int, date: Long) : this(0, "_", "_", date, false, null) {

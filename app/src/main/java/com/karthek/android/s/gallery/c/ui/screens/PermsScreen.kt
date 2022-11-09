@@ -1,5 +1,6 @@
 package com.karthek.android.s.gallery.c.ui.screens
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -22,14 +23,14 @@ import com.karthek.android.s.gallery.BuildConfig
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Perms(content: @Composable () -> Unit) {
-	val storagePermissionState =
-		rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+	//todo 33
+	val storagePermissionState = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
 	when (storagePermissionState.status) {
 		PermissionStatus.Granted -> {
 			content()
 		}
 		is PermissionStatus.Denied -> {
-				PermissionNotGrantedContent(storagePermissionState)
+			PermissionNotGrantedContent(storagePermissionState)
 		}
 	}
 }

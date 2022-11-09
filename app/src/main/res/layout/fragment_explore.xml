@@ -24,8 +24,7 @@
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+			android:layout_height="match_parent">
 
 			<ScrollView
 				android:layout_width="0dp"

@@ -22,8 +22,9 @@ fun PhotosScreen(
 	viewModel: SMViewModel,
 	index: Int = -1,
 	paddingValues: PaddingValues,
-	callback: (i: Int) -> Unit
+	callback: (i: Int) -> Unit,
 ) {
+	//todo add cab selection
 	val list = if (index == -1) {
 		viewModel.sMediaList
 	} else {
@@ -36,13 +37,13 @@ fun PhotosScreen(
 fun PhotosScreenContent(
 	SMediaList: List<SMedia>?,
 	paddingValues: PaddingValues = PaddingValues(),
-	callback: (i: Int) -> Unit
+	callback: (i: Int) -> Unit,
 ) {
 	if (SMediaList == null) {
 		ContentLoading()
-	} else if(SMediaList.isEmpty()){
+	} else if (SMediaList.isEmpty()) {
 		ContentEmpty()
-	}else {
+	} else {
 		SMediaGrid(SMediaList = SMediaList, paddingValues, callback)
 	}
 }
@@ -59,12 +60,12 @@ fun SMediaGrid(SMediaList: List<SMedia>, paddingValues: PaddingValues, callback:
 	}
 }
 
+
 @Composable
 fun SMediaItem(sMedia: SMedia, i: Int, callback: (i: Int) -> Unit) {
 	AsyncImage(
 		model = ImageRequest.Builder(LocalContext.current)
 			.data(sMedia)
-			.crossfade(true)
 			.build(),
 		contentDescription = "",
 		modifier = Modifier

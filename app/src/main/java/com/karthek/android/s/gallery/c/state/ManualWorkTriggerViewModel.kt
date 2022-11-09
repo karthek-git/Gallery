@@ -19,7 +19,7 @@ class ManualWorkTriggerViewModel @Inject constructor(private val appContext: App
 	fun onTriggerClick() {
 		val classifyWorkRequest = OneTimeWorkRequestBuilder<ClassifySMediaWorker>().build()
 		WorkManager.getInstance(appContext).apply {
-			enqueueUniqueWork(CLASSIFY_WORK_NAME, ExistingWorkPolicy.KEEP, classifyWorkRequest)
+			enqueueUniqueWork(CLASSIFY_WORK_NAME, ExistingWorkPolicy.REPLACE, classifyWorkRequest)
 		}
 	}
 

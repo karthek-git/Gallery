@@ -38,7 +38,7 @@ class SMViewModel @Inject constructor(private val repo: SMediaAccess) : ViewMode
 		viewModelScope.launch {
 			searchInProgress = true
 			searchResultSMedia = withContext(Dispatchers.IO) {
-				repo.searchSMedia(query)
+				repo.searchSMedia(query.trim())
 			}
 			searchInProgress = false
 		}
@@ -46,7 +46,8 @@ class SMViewModel @Inject constructor(private val repo: SMediaAccess) : ViewMode
 
 	init {
 		viewModelScope.launch {
-			sMediaList = repo.getSMedia(null)
+			sMediaList = repo.getSMedia()
+
 			folderList = repo.getFolders()
 		}
 	}

@@ -57,7 +57,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 	@Override
 	protected void onUserLeaveHint() {
 		super.onUserLeaveHint();
-		enterPictureInPictureMode(null);
+		enterPictureInPictureMode();
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
 
 	public void enter_pip(View view) {
-		enterPictureInPictureMode(null);
+		enterPictureInPictureMode();
 	}
 
 	public void toggle_controller_lock(View view) {
