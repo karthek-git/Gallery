@@ -21,6 +21,7 @@ class SMViewModel @Inject constructor(private val repo: SMediaAccess) : ViewMode
 	var folderList by mutableStateOf<List<MFolder>?>(null)
 	var searchInProgress by mutableStateOf(false)
 	var searchResultSMedia by mutableStateOf<List<SMedia>?>(null)
+	var currentSMediaList by mutableStateOf<List<SMedia>?>(null)
 	var currentSMedia: SMedia? = null
 
 	fun getFolderContents(index: Int): MutableState<SoftReference<List<SMedia>>?> {

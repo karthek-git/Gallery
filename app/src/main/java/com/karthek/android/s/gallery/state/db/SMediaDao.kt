@@ -19,6 +19,9 @@ interface SMediaDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insert(sMedia: SMedia)
 
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertSFaces(sFace: Array<SFace>)
+
 	@Insert
 	fun insertAll(sMedia: List<SMedia>)
 

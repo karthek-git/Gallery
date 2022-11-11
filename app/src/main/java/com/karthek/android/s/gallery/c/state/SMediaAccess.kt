@@ -7,10 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Files.FileColumns
 import com.karthek.android.s.gallery.c.a.MFolder
-import com.karthek.android.s.gallery.state.db.SFaceSMediaCrossRef
-import com.karthek.android.s.gallery.state.db.SFaceWithSMedia
-import com.karthek.android.s.gallery.state.db.SMedia
-import com.karthek.android.s.gallery.state.db.SMediaDao
+import com.karthek.android.s.gallery.state.db.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -134,8 +131,14 @@ class SMediaAccess @Inject constructor(
 		sMediaDao.findByCat(query)
 
 	suspend fun insertSMedia(sMedia: SMedia) = sMediaDao.insert(sMedia)
+	suspend fun insertSFaces(sFace: Array<SFace>) = sMediaDao.insertSFaces(sFace)
 
-	suspend fun getSFaceWithSMedia(): List<SFaceWithSMedia> = sMediaDao.getSFaceWithSMedia()
+	suspend fun getLocalSMedia(): List<SMedia> = sMediaDao.all
+	suspend fun getSFaceWithSMedia(): List<SFaceWithSMedia> {
+		return withContext(Dispatchers.IO) {
+			sMediaDao.getSFaceWithSMedia()
+		}
+	}
 
 	fun insertSFaceWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>) =
 		sMediaDao.insertSFaceWithSMedia(sFaceSMediaCrossRefs)

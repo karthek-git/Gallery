@@ -14,17 +14,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.SettingsActivity
+import com.karthek.android.s.gallery.c.state.FacesViewModel
 import com.karthek.android.s.gallery.c.state.ImageInfoViewModel
 import com.karthek.android.s.gallery.c.state.SMViewModel
 import com.karthek.android.s.gallery.c.ui.components.MediaInfoView
@@ -43,14 +42,78 @@ fun MainScreen() {
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenContent(viewModel: SMViewModel) {
-	val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+	val rootNavController = rememberNavController()
+	val onBackClick = { rootNavController.navigateUp(); Unit }
+	val onMoreClick = { SMedia: SMedia ->
+		viewModel.currentSMedia = SMedia
+		rootNavController.navigate("media_view_info")
+	}
+	NavHost(navController = rootNavController, startDestination = "root_host") {
+		composable(route = "root_host") {
+			RootView(viewModel, rootNavController)
+		}
+		composable(
+			route = "dest_view/{title}",
+			arguments = listOf(navArgument("title") { type = NavType.StringType })
+		) { navBackStackEntry ->
+			val title = navBackStackEntry.arguments?.getString("title") ?: ""
+			DestScreen(
+				title = title,
+				sMediaList = viewModel.currentSMediaList!!,
+				onItemClick = { i -> rootNavController.navigate("media_view/-1/$i") }
+			)
+		}
+		composable(
+			"media_view/-1/{i}",
+			arguments = listOf(navArgument("i") { type = NavType.IntType })
+		) { navBackStackEntry ->
+			val i = navBackStackEntry.arguments?.getInt("i") ?: 0
+			SMediaViewPager(
+				SMediaList = viewModel.currentSMediaList!!,
+				initialPage = i,
+				onBackClick = onBackClick,
+				onMoreClick = onMoreClick
+			)
+		}
+		composable(
+			"media_view_info",
+		) {
+			val imageInfoViewModel = hiltViewModel<ImageInfoViewModel>()
+			LaunchedEffect(
+				key1 = viewModel.currentSMedia,
+				block = { imageInfoViewModel.setImage(viewModel.currentSMedia!!.path) }
+			)
+			MediaInfoView(
+				viewModel = imageInfoViewModel,
+				onBackClick = onBackClick
+			)
+		}
+		composable(route = "faces_screen") {
+			val facesViewModel = hiltViewModel<FacesViewModel>()
+			FacesScreen(
+				viewModel = facesViewModel,
+				onItemClick = { index ->
+					viewModel.currentSMediaList =
+						facesViewModel.sFacesWithSMedia!![index].SMediaList
+					rootNavController.navigate("dest_view/People")
+				},
+				onBackClick = onBackClick
+			)
+		}
+
+	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RootView(viewModel: SMViewModel, rootNavController: NavHostController) {
 	val navController = rememberNavController()
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDestination = navBackStackEntry?.destination
 	val viewingMedia = (currentDestination?.route?.startsWith("media_view") != false)
+	val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 	val context = LocalContext.current
 	Scaffold(topBar = {
 		if (!viewingMedia) {
@@ -90,14 +153,17 @@ fun MainScreenContent(viewModel: SMViewModel) {
 				}
 			}
 		}
-	}, modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-		NavContent(navController = navController, viewModel = viewModel, it)
+	}, modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) { paddingValues ->
+		NavContent(rootNavController, navController, viewModel, paddingValues)
 	}
 }
 
 @Composable
 fun NavContent(
-	navController: NavHostController, viewModel: SMViewModel, paddingValues: PaddingValues
+	rootNavController: NavHostController,
+	navController: NavHostController,
+	viewModel: SMViewModel,
+	paddingValues: PaddingValues,
 ) {
 	val onBackClick = { navController.navigateUp(); Unit }
 	val onMoreClick = { SMedia: SMedia ->
@@ -113,7 +179,8 @@ fun NavContent(
 			ExploreScreen(
 				viewModel = viewModel,
 				paddingValues = paddingValues,
-				onItemClick = { i -> navController.navigate("media_view_explore/-1/$i") }
+				onItemClick = { i -> navController.navigate("media_view_explore/-1/$i") },
+				onPeopleClick = { rootNavController.navigate("faces_screen") }
 			)
 		}
 		composable("albums") {

@@ -7,6 +7,7 @@ import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.c.state.Prefs
 import com.karthek.android.s.gallery.c.state.SMediaAccess
 import com.karthek.android.s.gallery.ml.dbscan
+import com.karthek.android.s.gallery.state.db.SFace
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -37,11 +38,17 @@ class ClusterFacesWorker @AssistedInject constructor(
 	}
 
 	private suspend fun clusterFaces() {
-		val x = repo.getSMedia(sortAsc = true).flatMap { SMediaItem ->
+		setForegroundInfo(0f)
+		val x = repo.getLocalSMedia().flatMap { SMediaItem ->
 			val embeddings = SMediaItem.faceEmbeddings ?: listOf()
 			embeddings.map { embedding -> Pair(embedding, SMediaItem.id) }
 		}
-		repo.insertSFaceWithSMedia(dbscan(x).first)
+		setForegroundInfo(0.25f)
+		val pair = dbscan(x, eps = 1f, minInstances = 1)
+		setForegroundInfo(0.75f)
+		repo.insertSFaces(Array(pair.second) { index -> SFace(index, "") })
+		repo.insertSFaceWithSMedia(pair.first)
+		setForegroundInfo(1f)
 	}
 }
 

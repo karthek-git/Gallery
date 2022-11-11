@@ -37,7 +37,13 @@ class FaceDetector @Inject constructor(@ApplicationContext context: Context) {
 		val faceBitmaps = mutableListOf<Bitmap>()
 		val detectionList = result.multiFaceDetections()
 		if (detectionList.isEmpty()) return faceBitmaps
-		detectionList.forEach { detection -> faceBitmaps.add(getFaceBitmap(bitmap, detection)) }
+		detectionList.forEach { detection ->
+			try {
+				faceBitmaps.add(getFaceBitmap(bitmap, detection))
+			} catch (e: Exception) {
+				e.printStackTrace()
+			}
+		}
 		return faceBitmaps
 	}
 
@@ -45,10 +51,10 @@ class FaceDetector @Inject constructor(@ApplicationContext context: Context) {
 		val width = bitmap.width
 		val height = bitmap.height
 		val boundingBox = detection.locationData.relativeBoundingBox
-		val left = (boundingBox.xmin) * width
-		val top = (boundingBox.ymin) * height
-		val right = (boundingBox.width) * width
-		val bottom = (boundingBox.height) * height
-		return Bitmap.createBitmap(bitmap, left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+		val left = ((boundingBox.xmin) * width).toInt().coerceIn(0, width)
+		val top = ((boundingBox.ymin) * height).toInt().coerceIn(0, height)
+		val right = ((boundingBox.width) * width).toInt().coerceAtMost(width - left)
+		val bottom = ((boundingBox.height) * height).toInt().coerceAtMost(height - top)
+		return Bitmap.createBitmap(bitmap, left, top, right, bottom)
 	}
 }
