@@ -25,6 +25,9 @@ data class SMedia(
 
 	@ColumnInfo(name = "cat")
 	var cat: String?,
+
+	@ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+	var faceEmbeddings: List<FloatArray>? = null,
 ) {
 	@Ignore
 	var uri: Uri? = null

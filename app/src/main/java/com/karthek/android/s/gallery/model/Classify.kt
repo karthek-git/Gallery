@@ -3,14 +3,17 @@ package com.karthek.android.s.gallery.model
 import android.content.Context
 import android.graphics.Bitmap
 import com.karthek.android.s.gallery.ml.EfficientnetLite2Uint82
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.model.Model
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier.ImageClassifierOptions
+import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class Classify(context: Context) {
+@Singleton
+class Classify @Inject constructor(@ApplicationContext context: Context) {
 	private val model: EfficientnetLite2Uint82
 	private val imageSceneClassifier: ImageClassifier
 
@@ -40,7 +43,7 @@ class Classify(context: Context) {
 			.toString()
 	}
 
-	fun getSceneCategory(tensorImage: TensorImage): String {
+	private fun getSceneCategory(tensorImage: TensorImage): String {
 		return imageSceneClassifier.classify(tensorImage)[0].categories
 			.maxBy { category -> category.score }
 			.label

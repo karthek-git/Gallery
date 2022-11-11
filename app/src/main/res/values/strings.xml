@@ -8,6 +8,13 @@
 	<string name="title_activity_settings">SettingsActivity</string>
 	<string name="title_activity_licenses">LicensesActivity</string>
 
+	<string name="notify_channel_name_classify">Classify progress</string>
+	<string name="notify_channel_desc_classify">Shows classify progress notifications</string>
+	<string name="notify_title_classify">Classifying…</string>
+	<string name="notify_channel_name_face_cluster">Face clustering progress</string>
+	<string name="notify_channel_desc_face_cluster">Shows face clustering progress notifications</string>
+	<string name="notify_title_face_cluster">Clustering similar faces…</string>
+
 	<string name="title_home">Home</string>
 	<string name="title_dashboard">Dashboard</string>
 	<string name="title_notifications">Notifications</string>

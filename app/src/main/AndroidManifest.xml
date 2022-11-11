@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+	xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission
-        android:name="android.permission.ACCESS_NETWORK_STATE"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.INTERNET"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.READ_PHONE_STATE"
-        tools:node="remove" />
+	<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+	<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+	<uses-permission
+		android:name="android.permission.READ_EXTERNAL_STORAGE"
+		android:maxSdkVersion="32" />
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+	<uses-permission
+		android:name="android.permission.ACCESS_NETWORK_STATE"
+		tools:node="remove" />
+	<uses-permission
+		android:name="android.permission.INTERNET"
+		tools:node="remove" />
+	<uses-permission
+		android:name="android.permission.READ_PHONE_STATE"
+		tools:node="remove" />
 
-    <application
-        android:name=".SApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/BlackSanUI" >
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
-        <activity
-            android:name=".c.MActivity"
-            android:exported="true"
-            android:theme="@style/BlackSanUI.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+	<application
+		android:name=".SApplication"
+		android:allowBackup="true"
+		android:icon="@mipmap/ic_launcher"
+		android:label="@string/app_name"
+		android:requestLegacyExternalStorage="true"
+		android:roundIcon="@mipmap/ic_launcher_round"
+		android:supportsRtl="true"
+		android:theme="@style/BlackSanUI">
+		<activity
+			android:name=".MainActivity"
+			android:exported="true" />
+		<activity
+			android:name=".c.MActivity"
+			android:exported="true"
+			android:theme="@style/BlackSanUI.NoActionBar">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.players.AudioPlayerActivity"
-            android:exported="true"
-            android:label="@string/title_activity_audio_player"
-            android:theme="@style/BlackSanUI.Dialog" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".ui.players.AudioPlayerActivity"
+			android:exported="true"
+			android:label="@string/title_activity_audio_player"
+			android:theme="@style/BlackSanUI.Dialog">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="content" />
-                <data android:mimeType="audio/*" />
+				<data android:scheme="content" />
+				<data android:mimeType="audio/*" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.players.VideoPlayerActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:exported="true"
-            android:label="@string/video_player"
-            android:supportsPictureInPicture="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".ui.players.VideoPlayerActivity"
+			android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+			android:exported="true"
+			android:label="@string/video_player"
+			android:supportsPictureInPicture="true">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="content" />
-                <data android:mimeType="video/*" />
+				<data android:scheme="content" />
+				<data android:mimeType="video/*" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MediaViewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:exported="true"
-            android:label="@string/title_activity_media_view"
-            android:supportsPictureInPicture="true"
-            android:theme="@style/Theme.Gallery.Fullscreen"
-            tools:node="remove" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".MediaViewActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:exported="true"
+			android:label="@string/title_activity_media_view"
+			android:supportsPictureInPicture="true"
+			android:theme="@style/Theme.Gallery.Fullscreen"
+			tools:node="remove">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="content" />
-                <data android:mimeType="image/*" />
-                <data android:mimeType="video/*" />
+				<data android:scheme="content" />
+				<data android:mimeType="image/*" />
+				<data android:mimeType="video/*" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ManualWorkTriggerActivity"
-            android:exported="true"
-            android:label="@string/title_activity_manual_work_trigger"
-            android:theme="@style/BlackSanUI" />
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_settings" >
-            <intent-filter>
-                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".ManualWorkTriggerActivity"
+			android:exported="true"
+			android:label="@string/title_activity_manual_work_trigger"
+			android:theme="@style/BlackSanUI" />
+		<activity
+			android:name=".SettingsActivity"
+			android:exported="true"
+			android:label="@string/title_activity_settings">
+			<intent-filter>
+				<action android:name="android.intent.action.APPLICATION_PREFERENCES" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".LicensesActivity"
-            android:exported="true"
-            android:label="@string/title_activity_licenses" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".LicensesActivity"
+			android:exported="true"
+			android:label="@string/title_activity_licenses" />
 
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove" />
+		<provider
+			android:name="androidx.startup.InitializationProvider"
+			android:authorities="${applicationId}.androidx-startup"
+			tools:node="remove" />
 
-        <service
-            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
-            tools:node="remove" />
-        <service
-            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
-            tools:node="remove" />
+		<service
+			android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+			tools:node="remove" />
+		<service
+			android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+			tools:node="remove" />
 
-        <receiver
-            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-            tools:node="remove" />
-    </application>
+		<receiver
+			android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+			tools:node="remove" />
+	</application>
 
 </manifest>

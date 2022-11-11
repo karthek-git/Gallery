@@ -27,4 +27,11 @@ interface SMediaDao {
 
 	@Delete
 	fun delete(sMedia: SMedia)
+
+	@Transaction
+	@Query("SELECT * FROM SFace")
+	fun getSFaceWithSMedia(): List<SFaceWithSMedia>
+
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	fun insertSFaceWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>)
 }

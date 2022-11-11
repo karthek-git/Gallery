@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.karthek.android.s.gallery.workers.CLASSIFY_WORK_NAME
 import com.karthek.android.s.gallery.workers.ClassifySMediaWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,7 +28,4 @@ class ManualWorkTriggerViewModel @Inject constructor(private val appContext: App
 		WorkManager.getInstance(appContext).pruneWork()
 	}
 
-	companion object {
-		const val CLASSIFY_WORK_NAME = "classifyWork"
-	}
 }

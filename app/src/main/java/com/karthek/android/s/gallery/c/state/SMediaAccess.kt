@@ -7,6 +7,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Files.FileColumns
 import com.karthek.android.s.gallery.c.a.MFolder
+import com.karthek.android.s.gallery.state.db.SFaceSMediaCrossRef
+import com.karthek.android.s.gallery.state.db.SFaceWithSMedia
 import com.karthek.android.s.gallery.state.db.SMedia
 import com.karthek.android.s.gallery.state.db.SMediaDao
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,7 +24,11 @@ class SMediaAccess @Inject constructor(
 	private val sMediaDao: SMediaDao,
 ) {
 
-	suspend fun getSMedia(dir: String = "", fromDate: Long = 0): List<SMedia> {
+	suspend fun getSMedia(
+		dir: String = "",
+		fromDate: Long = 0,
+		sortAsc: Boolean = false,
+	): List<SMedia> {
 		return withContext(Dispatchers.Default) {
 			val list: MutableList<SMedia> = mutableListOf()
 			val uri = MediaStore.Files.getContentUri("external")
@@ -42,7 +48,7 @@ class SMediaAccess @Inject constructor(
 			var selection = "${FileColumns.MEDIA_TYPE} IN (?, ?)"
 			if (dir.isNotEmpty()) selection += " AND ${FileColumns.DATA} LIKE '$dir%'"
 			if (fromDate != 0L) selection += " AND ${FileColumns.DATE_MODIFIED} >= $fromDate"
-			val sortOrder = "$timeColumn DESC"
+			val sortOrder = if (sortAsc) "$timeColumn ASC" else "$timeColumn DESC"
 			val selectionArgs = arrayOf(
 				FileColumns.MEDIA_TYPE_IMAGE.toString(),
 				FileColumns.MEDIA_TYPE_VIDEO.toString()
@@ -128,5 +134,10 @@ class SMediaAccess @Inject constructor(
 		sMediaDao.findByCat(query)
 
 	suspend fun insertSMedia(sMedia: SMedia) = sMediaDao.insert(sMedia)
+
+	suspend fun getSFaceWithSMedia(): List<SFaceWithSMedia> = sMediaDao.getSFaceWithSMedia()
+
+	fun insertSFaceWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>) =
+		sMediaDao.insertSFaceWithSMedia(sFaceSMediaCrossRefs)
 
 }

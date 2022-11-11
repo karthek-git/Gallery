@@ -14,9 +14,9 @@ import coil.Coil
 import coil.ImageLoader
 import com.karthek.android.s.gallery.c.helpers.SMediaIconFetcher
 import com.karthek.android.s.gallery.c.helpers.SMediaIconKeyer
-import com.karthek.android.s.gallery.c.state.ManualWorkTriggerViewModel.Companion.CLASSIFY_WORK_NAME
 import com.karthek.android.s.gallery.c.ui.screens.MainScreen
 import com.karthek.android.s.gallery.c.ui.theme.AppTheme
+import com.karthek.android.s.gallery.workers.CLASSIFY_WORK_NAME
 import com.karthek.android.s.gallery.workers.ClassifySMediaWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
