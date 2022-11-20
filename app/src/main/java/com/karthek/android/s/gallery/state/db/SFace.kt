@@ -12,7 +12,7 @@ data class SFace(
 @Entity(primaryKeys = ["faceId", "SMediaId"])
 data class SFaceSMediaCrossRef(
 	var faceId: Int,
-	val SMediaId: Int,
+	var SMediaId: Int,
 )
 
 data class SFaceWithSMedia(

@@ -10,16 +10,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.karthek.android.s.gallery.R
-import com.karthek.android.s.gallery.state.db.SMedia
+import com.karthek.android.s.gallery.c.state.SMViewModel
 
 @Composable
 fun DestScreen(
 	title: String,
-	sMediaList: List<SMedia>,
+	viewModel:SMViewModel,
+	onBackClick: () -> Unit,
 	onItemClick: (Int) -> Unit,
 ) {
-	DestScaffold(name = title, onBackClick = { /*TODO*/ }) { paddingValues ->
-		PhotosScreenContent(sMediaList, paddingValues, onItemClick)
+	DestScaffold(name = title, onBackClick = onBackClick) { paddingValues ->
+		PhotosScreenContent(viewModel.currentSMediaList, paddingValues, onItemClick)
 	}
 }
 

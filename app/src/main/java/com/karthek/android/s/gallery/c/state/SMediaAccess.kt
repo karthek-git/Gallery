@@ -43,7 +43,8 @@ class SMediaAccess @Inject constructor(
 			)
 
 			var selection = "${FileColumns.MEDIA_TYPE} IN (?, ?)"
-			if (dir.isNotEmpty()) selection += " AND ${FileColumns.DATA} LIKE '$dir%'"
+			if (dir.isNotEmpty()) selection += " AND ${FileColumns.DATA} LIKE '$dir%'" +
+					" AND ${FileColumns.DATA} NOT GLOB '$dir/*[/]*'"
 			if (fromDate != 0L) selection += " AND ${FileColumns.DATE_MODIFIED} >= $fromDate"
 			val sortOrder = if (sortAsc) "$timeColumn ASC" else "$timeColumn DESC"
 			val selectionArgs = arrayOf(

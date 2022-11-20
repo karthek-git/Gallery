@@ -20,17 +20,10 @@ import com.karthek.android.s.gallery.state.db.SMedia
 @Composable
 fun PhotosScreen(
 	viewModel: SMViewModel,
-	index: Int = -1,
 	paddingValues: PaddingValues,
 	callback: (i: Int) -> Unit,
 ) {
-	//todo add cab selection
-	val list = if (index == -1) {
-		viewModel.sMediaList
-	} else {
-		viewModel.getFolderContents(index).value?.get()
-	}
-	PhotosScreenContent(SMediaList = list, paddingValues, callback)
+	PhotosScreenContent(SMediaList = viewModel.sMediaList, paddingValues, callback)
 }
 
 @Composable

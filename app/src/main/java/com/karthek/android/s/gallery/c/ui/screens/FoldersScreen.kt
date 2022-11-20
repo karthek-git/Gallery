@@ -1,5 +1,6 @@
 package com.karthek.android.s.gallery.c.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -75,15 +77,18 @@ fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
 			model = ImageRequest.Builder(LocalContext.current)
 				.data(folder.previewSMedia)
 				.build(),
-			contentDescription = "",
+			contentDescription = folder.name,
 			modifier = Modifier
 				.size(150.dp)
 				.padding(1.dp)
-				.clip(RoundedCornerShape(10.dp)),
+				.clip(RoundedCornerShape(10.dp))
+				.background(MaterialTheme.colorScheme.onSurfaceVariant),
 			contentScale = ContentScale.Crop
 		)
 		Text(
 			text = folder.name,
+			maxLines = 2,
+			overflow = TextOverflow.Ellipsis,
 			modifier = Modifier.padding(top = 4.dp),
 			style = MaterialTheme.typography.labelLarge
 		)

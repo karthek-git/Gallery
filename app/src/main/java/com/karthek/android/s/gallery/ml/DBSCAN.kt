@@ -37,9 +37,11 @@ fun dbscan(
 			while (nCp.isNotEmpty()) {
 				val tempCp = nCp.removeLast()
 				xLabels[tempCp].faceId = label
+				xLabels[tempCp].SMediaId = x[tempCp].second
 				xNeighbours[tempCp].second.forEach { nP ->
 					if ((xNeighbours[nP].first) && (xLabels[nP].faceId == -1)) nCp.add(nP)
-					xLabels[nP] = SFaceSMediaCrossRef(label, x[nP].second)
+					xLabels[nP].faceId = label
+					xLabels[nP].SMediaId = x[nP].second
 				}
 			}
 		}

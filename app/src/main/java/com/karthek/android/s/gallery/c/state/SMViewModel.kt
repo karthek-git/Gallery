@@ -1,6 +1,5 @@
 package com.karthek.android.s.gallery.c.state
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,25 +19,28 @@ class SMViewModel @Inject constructor(private val repo: SMediaAccess) : ViewMode
 	var sMediaList by mutableStateOf<List<SMedia>?>(null)
 	var folderList by mutableStateOf<List<MFolder>?>(null)
 	var searchInProgress by mutableStateOf(false)
-	var searchResultSMedia by mutableStateOf<List<SMedia>?>(null)
 	var currentSMediaList by mutableStateOf<List<SMedia>?>(null)
 	var currentSMedia: SMedia? = null
 
-	fun getFolderContents(index: Int): MutableState<SoftReference<List<SMedia>>?> {
+	fun getFolderContents(index: Int) {
 		val folder = folderList!![index]
 		if (folder.l.value == null) {
+			currentSMediaList = null
 			viewModelScope.launch {
 				folder.l.value =
 					withContext(Dispatchers.Default) { SoftReference(repo.getSMedia(folder.path)) }
+				currentSMediaList = folder.l.value?.get()
 			}
+		} else {
+			currentSMediaList = folder.l.value?.get()
 		}
-		return folder.l
 	}
 
 	fun onSearchAction(query: String) {
 		viewModelScope.launch {
 			searchInProgress = true
-			searchResultSMedia = withContext(Dispatchers.IO) {
+			currentSMediaList = null
+			currentSMediaList = withContext(Dispatchers.IO) {
 				repo.searchSMedia(query.trim())
 			}
 			searchInProgress = false

@@ -39,12 +39,15 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.github.k1rakishou.cssi_lib.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.helper.*
 import com.karthek.android.s.gallery.state.db.SMedia
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -54,43 +57,63 @@ fun SMediaViewPager(
 	onBackClick: () -> Unit,
 	onMoreClick: (SMedia) -> Unit,
 ) {
+	val view = LocalView.current
+	val context = LocalContext.current
+	val window = if (context is Activity) context.window else null
+	val systemUiController = rememberSystemUiController(window)
 	var inImmersiveMode by rememberSaveable { mutableStateOf(false) }
 	val pagerState = rememberPagerState(initialPage = initialPage)
-	Box {
-		HorizontalPager(count = SMediaList.size, state = pagerState) {
-			val view = LocalView.current
-			val context = LocalContext.current
-			val window = if (context is Activity) context.window else null
-			val systemUiController = rememberSystemUiController(window)
-			SMediaView(SMediaList[it]) {
-				inImmersiveMode = !inImmersiveMode
-				if (window != null) {
+	val coroutineScope = rememberCoroutineScope()
+	//todo workup slideshow
+	var inSlideShow by rememberSaveable { mutableStateOf(false) }
+	val onSlideShowClick = {
+		coroutineScope.launch {
+			inSlideShow = true
+			inImmersiveMode = true
+			toggleSystemBars(window, view, true, systemUiController)
+			slideShowHandler(SMediaList.size, pagerState)
+			inImmersiveMode = false
+			inSlideShow = false
+		}
+		Unit
+	}
+	Surface(color = Color.Black) {
+		Box(modifier = Modifier.fillMaxSize()) {
+			HorizontalPager(count = SMediaList.size, state = pagerState) {
+				SMediaView(SMediaList[it]) {
+					if (inSlideShow) return@SMediaView
+					inImmersiveMode = !inImmersiveMode
 					toggleSystemBars(window, view, inImmersiveMode, systemUiController)
 				}
-			}
-			BackHandler {
-				if (window != null) {
+				BackHandler {
 					toggleSystemBars(window, view, false, systemUiController)
+					if (inSlideShow) {
+						inSlideShow = false
+						inImmersiveMode = false
+						return@BackHandler
+					}
+					onBackClick()
 				}
-				onBackClick()
 			}
-		}
-		if (!inImmersiveMode) {
-			SMediaViewControls(
-				sMedia = SMediaList[pagerState.currentPage],
-				onBackClick = onBackClick,
-				onMoreClick = onMoreClick
-			)
+			if (!inImmersiveMode) {
+				SMediaViewControls(
+					sMedia = SMediaList[pagerState.currentPage],
+					onBackClick = onBackClick,
+					onMoreClick = onMoreClick,
+					onSlideShowClick = onSlideShowClick
+				)
+			}
 		}
 	}
 }
 
 private fun toggleSystemBars(
-	window: Window,
+	window: Window?,
 	view: View,
 	inImmersiveMode: Boolean,
 	systemUiController: SystemUiController,
 ) {
+	window ?: return
 	val windowInsetsController = WindowCompat.getInsetsController(window, view)
 	windowInsetsController.systemBarsBehavior =
 		WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
@@ -110,11 +133,12 @@ fun SMediaView(sMedia: SMedia, onClick: () -> Unit) {
 	} else {
 		//SubSampleImage(sMedia = sMedia)
 		//ZoomableImage(sMedia = sMedia)
+		val context = LocalContext.current
 		ComposeSubsamplingScaleImage(
 			state = rememberComposeSubsamplingScaleImageState(
 				scrollableContainerDirection = ScrollableContainerDirection.Horizontal
 			),
-			imageSourceProvider = SMediaImageSourceProvider(sMedia.path),
+			imageSourceProvider = SMediaImageSourceProvider(context, sMedia),
 			onImageTapped = { onClick() },
 			modifier = Modifier.fillMaxSize()
 		)
@@ -145,37 +169,44 @@ fun BoxScope.SMediaViewControls(
 	sMedia: SMedia,
 	onBackClick: () -> Unit,
 	onMoreClick: (SMedia) -> Unit,
+	onSlideShowClick: () -> Unit,
 ) {
 	val scrimColor = if (!isSystemInDarkTheme()) {
 		MaterialTheme.colorScheme.onSurface.copy(alpha = 0.32f)
 	} else {
 		Color.Black.copy(alpha = 0.5f)
 	}
-	TopAppBar(
-		title = {},
-		navigationIcon = {
-			IconButton(onClick = onBackClick) {
-				Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "")
-			}
-		},
-		actions = {
-			IconButton(onClick = { onMoreClick(sMedia) }) {
-				Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = "")
-			}
-		},
-		colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = scrimColor),
-		modifier = Modifier.align(Alignment.TopCenter)
-	)
-	SMediaViewToolbar(
-		sMedia = sMedia, modifier = Modifier
-			.align(Alignment.BottomCenter)
-			.background(color = scrimColor)
-			.navigationBarsPadding()
-	)
+	CompositionLocalProvider(values = arrayOf(LocalContentColor.provides(Color.White))) {
+		TopAppBar(
+			title = {},
+			navigationIcon = {
+				IconButton(onClick = onBackClick) {
+					Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "")
+				}
+			},
+			actions = {
+				IconButton(onClick = { onMoreClick(sMedia) }) {
+					Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = "")
+				}
+			},
+			colors = TopAppBarDefaults.smallTopAppBarColors(
+				containerColor = Color.Black,
+				navigationIconContentColor = LocalContentColor.current,
+				actionIconContentColor = LocalContentColor.current
+			),
+			modifier = Modifier.align(Alignment.TopCenter)
+		)
+		SMediaViewToolbar(
+			sMedia = sMedia, onSlideShowClick = onSlideShowClick, modifier = Modifier
+				.align(Alignment.BottomCenter)
+				.background(color = Color.Black)
+				.navigationBarsPadding()
+		)
+	}
 }
 
 @Composable
-fun SMediaViewToolbar(sMedia: SMedia, modifier: Modifier) {
+fun SMediaViewToolbar(sMedia: SMedia, modifier: Modifier, onSlideShowClick: () -> Unit) {
 	val context = LocalContext.current
 	Row(
 		horizontalArrangement = Arrangement.SpaceEvenly,
@@ -195,12 +226,14 @@ fun SMediaViewToolbar(sMedia: SMedia, modifier: Modifier) {
 		ToolbarItem(imageVector = Icons.Outlined.ExitToApp,
 			title = stringResource(id = R.string.use_as),
 			onClick = { useAsHandler(context, sMedia) })
-		ToolbarItem(imageVector = Icons.Outlined.Print,
-			title = stringResource(id = R.string.print),
-			onClick = { printHandler(context, sMedia) })
+		if (!(sMedia.isVideo)) {
+			ToolbarItem(imageVector = Icons.Outlined.Print,
+				title = stringResource(id = R.string.print),
+				onClick = { printHandler(context, sMedia) })
+		}
 		ToolbarItem(imageVector = Icons.Outlined.Slideshow,
 			title = stringResource(id = R.string.slideshow),
-			onClick = {})
+			onClick = onSlideShowClick)
 	}
 }
 
@@ -218,6 +251,15 @@ fun ToolbarItem(imageVector: ImageVector, title: String, onClick: () -> Unit) {
 			modifier = Modifier.padding(bottom = 4.dp)
 		)
 		Text(text = title, style = MaterialTheme.typography.labelLarge)
+	}
+}
+
+@OptIn(ExperimentalPagerApi::class)
+suspend fun slideShowHandler(count: Int, pagerState: PagerState) {
+	val initPage = (pagerState.currentPage) + 1
+	repeat(count) { i ->
+		delay(timeMillis = 5000)
+		pagerState.animateScrollToPage(initPage + i)
 	}
 }
 

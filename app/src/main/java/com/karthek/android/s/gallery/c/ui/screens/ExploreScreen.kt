@@ -25,21 +25,21 @@ import androidx.compose.ui.unit.dp
 import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.c.state.SMViewModel
 import com.karthek.android.s.gallery.c.ui.components.SearchTextField
-import com.karthek.android.s.gallery.state.db.SMedia
 
 @Composable
 fun ExploreScreen(
 	viewModel: SMViewModel,
 	paddingValues: PaddingValues,
-	onItemClick: (Int) -> Unit,
 	onPeopleClick: () -> Unit,
+	onSearchAction: (String) -> Unit,
 ) {
 	ExploreScreenContent(
 		paddingValues = paddingValues,
 		showProgressBar = viewModel.searchInProgress,
-		sMediaList = viewModel.searchResultSMedia,
-		onSearchAction = viewModel::onSearchAction,
-		onItemClick = onItemClick,
+		onSearchAction = { query ->
+			viewModel.onSearchAction(query)
+			onSearchAction(query)
+		},
 		onPeopleClick = onPeopleClick
 	)
 }
@@ -49,9 +49,7 @@ fun ExploreScreen(
 fun ExploreScreenContent(
 	paddingValues: PaddingValues,
 	showProgressBar: Boolean,
-	sMediaList: List<SMedia>?,
 	onSearchAction: (String) -> Unit,
-	onItemClick: (Int) -> Unit,
 	onPeopleClick: () -> Unit,
 ) {
 	var textFieldValue by rememberSaveable { mutableStateOf("") }
@@ -64,11 +62,7 @@ fun ExploreScreenContent(
 			if (showProgressBar) {
 				ContentLoading()
 			}
-			if (!showProgressBar && sMediaList != null) {
-				PhotosScreenContent(SMediaList = sMediaList, callback = onItemClick)
-			} else {
 				FacesRow(onPeopleClick)
-			}
 		}
 	}
 }

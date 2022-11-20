@@ -7,6 +7,9 @@
 	<uses-permission
 		android:name="android.permission.READ_EXTERNAL_STORAGE"
 		android:maxSdkVersion="32" />
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+		tools:node="remove" />
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 	<uses-permission
 		android:name="android.permission.ACCESS_NETWORK_STATE"
@@ -58,7 +61,6 @@
 			android:name=".ui.players.VideoPlayerActivity"
 			android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
 			android:exported="true"
-			android:label="@string/video_player"
 			android:supportsPictureInPicture="true">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -73,16 +75,13 @@
 			android:name=".MediaViewActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize"
 			android:exported="true"
-			android:label="@string/title_activity_media_view"
 			android:supportsPictureInPicture="true"
-			android:theme="@style/Theme.Gallery.Fullscreen"
-			tools:node="remove">
+			android:theme="@style/BlackSanUI.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 
 				<data android:scheme="content" />
 				<data android:mimeType="image/*" />
-				<data android:mimeType="video/*" />
 
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
@@ -91,7 +90,7 @@
 			android:name=".ManualWorkTriggerActivity"
 			android:exported="true"
 			android:label="@string/title_activity_manual_work_trigger"
-			android:theme="@style/BlackSanUI" />
+			android:theme="@style/BlackSanUI.NoActionBar" />
 		<activity
 			android:name=".SettingsActivity"
 			android:exported="true"

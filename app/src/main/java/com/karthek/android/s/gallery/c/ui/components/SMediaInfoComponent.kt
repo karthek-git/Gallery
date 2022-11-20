@@ -13,7 +13,7 @@ import com.karthek.android.s.gallery.c.state.ImageInfoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaInfoView(viewModel: ImageInfoViewModel, onBackClick: () -> Unit) {
+fun SMediaInfoComponent(viewModel: ImageInfoViewModel, onBackClick: () -> Unit) {
 	Scaffold(topBar = {
 		TopAppBar(title = { Text(text = "Info") }, navigationIcon = {
 			IconButton(onClick = onBackClick) {
@@ -24,23 +24,37 @@ fun MediaInfoView(viewModel: ImageInfoViewModel, onBackClick: () -> Unit) {
 			}
 		})
 	}) { contentPadding ->
-		Column(modifier = Modifier.padding(contentPadding)) {
-			MediaInfoItem(
-				headLineText = viewModel.album,
-				supportingText = viewModel.path,
-				icon = Icons.Outlined.FilterNone
-			)
-			MediaInfoItem(
+		SMediaInfoComponentContent(
+			viewModel = viewModel,
+			modifier = Modifier.padding(contentPadding)
+		)
+	}
+}
+
+@Composable
+fun SMediaInfoComponentContent(viewModel: ImageInfoViewModel, modifier: Modifier) {
+	Column(modifier = modifier) {
+		SMediaInfoItem(
+			headLineText = viewModel.album,
+			supportingText = viewModel.path,
+			icon = Icons.Outlined.FilterNone
+		)
+		if (viewModel.hasExifMetaData) {
+			SMediaInfoItem(
 				headLineText = viewModel.takenDate,
 				supportingText = viewModel.modifiedDate,
 				icon = Icons.Outlined.Today
 			)
-			MediaInfoItem(
-				headLineText = viewModel.name,
-				supportingText = viewModel.size,
-				icon = Icons.Outlined.Image
-			)
-			MediaInfoItem(
+		} else {
+			SMediaInfoItem(headLineText = viewModel.modifiedDate, icon = Icons.Outlined.Today)
+		}
+		SMediaInfoItem(
+			headLineText = viewModel.name,
+			supportingText = viewModel.size,
+			icon = Icons.Outlined.Image
+		)
+		if (viewModel.hasExifMetaData) {
+			SMediaInfoItem(
 				headLineText = viewModel.oem,
 				supportingText = viewModel.params,
 				icon = Icons.Outlined.Camera
@@ -51,10 +65,10 @@ fun MediaInfoView(viewModel: ImageInfoViewModel, onBackClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaInfoItem(
+fun SMediaInfoItem(
 	headLineText: String,
 	supportingText: String,
-	icon: ImageVector
+	icon: ImageVector,
 ) {
 	ListItem(
 		headlineText = { Text(text = headLineText, fontWeight = FontWeight.SemiBold) },
@@ -65,6 +79,17 @@ fun MediaInfoItem(
 			)
 		},
 		leadingContent = { Icon(imageVector = icon, contentDescription = "") },
-		modifier = Modifier
+	)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SMediaInfoItem(
+	headLineText: String,
+	icon: ImageVector,
+) {
+	ListItem(
+		headlineText = { Text(text = headLineText, style = MaterialTheme.typography.bodyMedium) },
+		leadingContent = { Icon(imageVector = icon, contentDescription = "") },
 	)
 }
