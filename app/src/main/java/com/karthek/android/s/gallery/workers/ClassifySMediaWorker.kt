@@ -14,6 +14,8 @@ import com.karthek.android.s.gallery.helper.createBitmap
 import com.karthek.android.s.gallery.model.CLASSIFY_ML_VERSION
 import com.karthek.android.s.gallery.model.Classify
 import com.karthek.android.s.gallery.model.FaceRecognizer
+import com.karthek.android.s.gallery.state.db.SCategory
+import com.karthek.android.s.gallery.state.db.SCategorySMediaCrossRef
 import com.karthek.android.s.gallery.state.db.SMedia
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -66,17 +68,29 @@ class ClassifySMediaWorker @AssistedInject constructor(
 		val lastMLVersion = currentPrefs.lastMLVersion
 		return if (CLASSIFY_ML_VERSION > lastMLVersion) {
 			prefs.onLastMLVersionChange(CLASSIFY_ML_VERSION)
+			insertSCategories()
 			repo.getSMedia(sortAsc = true)
 		} else {
 			repo.getSMedia(fromDate = currentPrefs.lastDate, sortAsc = true)
 		}
 	}
 
+	private suspend fun insertSCategories() {
+		val sCategories = mutableListOf<SCategory>()
+		appContext.assets.open("labels.txt").bufferedReader().useLines { lines ->
+			lines.forEachIndexed { index, s -> sCategories.add(SCategory(index, s)) }
+		}
+		repo.insertSCategories(sCategories)
+	}
+
 	private suspend fun createDB() {
 		val list = getSMediaToProcess()
 		for (i in list.indices) {
 			val bitmap = getBitmap(list[i]) ?: continue
-			list[i].cat = classify.getCategory(bitmap)
+			val classifyResult = classify.getCategory(bitmap)
+			list[i].cat = classifyResult.first
+			val sceneCategory = classifyResult.second
+			repo.insertSCategoryWithSMedia(SCategorySMediaCrossRef(sceneCategory, list[i].id))
 			list[i].faceEmbeddings = faceRecognizer.getFaceEmbeddings(bitmap)
 			repo.insertSMedia(list[i])
 			if ((i % 1000) == 0) prefs.onLastDateChange(list[i].date)

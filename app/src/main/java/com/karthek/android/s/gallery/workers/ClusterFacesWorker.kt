@@ -44,10 +44,10 @@ class ClusterFacesWorker @AssistedInject constructor(
 			embeddings.map { embedding -> Pair(embedding, SMediaItem.id) }
 		}
 		setForegroundInfo(0.25f)
-		val pair = dbscan(x, eps = 1f, minInstances = 1)
+		val pair = dbscan(x, minInstances = 3)
 		setForegroundInfo(0.75f)
 		repo.insertSFaces(Array(pair.second) { index -> SFace(index, "") })
-		repo.insertSFaceWithSMedia(pair.first)
+		repo.insertSFacesWithSMedia(pair.first)
 		setForegroundInfo(1f)
 	}
 }

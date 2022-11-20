@@ -44,6 +44,7 @@
 	<string name="description_pip">Picture in picture mode</string>
 	<string name="explore">Explore</string>
 	<string name="people">People</string>
+	<string name="things">Things</string>
 
 	<plurals name="items">
 		<item quantity="one">%d item</item>

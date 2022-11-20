@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.karthek.android.s.gallery.R
 import com.karthek.android.s.gallery.SettingsActivity
+import com.karthek.android.s.gallery.c.state.CategoriesViewModel
 import com.karthek.android.s.gallery.c.state.FacesViewModel
 import com.karthek.android.s.gallery.c.state.ImageInfoViewModel
 import com.karthek.android.s.gallery.c.state.SMViewModel
@@ -50,70 +51,75 @@ fun MainScreenContent(viewModel: SMViewModel) {
 		viewModel.currentSMedia = SMedia
 		rootNavController.navigate("media_view_info")
 	}
+	val onFaceItemClick = { index: Int, facesViewModel: FacesViewModel ->
+		viewModel.currentSMediaList = facesViewModel.sFacesWithSMedia!![index].SMediaList
+		rootNavController.navigate("dest_view/People")
+	}
+	val onThingItemClick = { index: Int, categoriesViewModel: CategoriesViewModel ->
+		val sCategoryWithSMedia = categoriesViewModel.sCategoriesWithSMedia!![index]
+		viewModel.currentSMediaList = sCategoryWithSMedia.SMediaList
+		rootNavController.navigate("dest_view/${sCategoryWithSMedia.sCategory.name}")
+	}
 	NavHost(navController = rootNavController, startDestination = "root_host") {
 		composable(route = "root_host") {
-			RootView(viewModel, rootNavController)
+			RootView(viewModel, rootNavController, onFaceItemClick, onThingItemClick)
 		}
-		composable(
-			route = "dest_view/{title}",
-			arguments = listOf(navArgument("title") { type = NavType.StringType })
-		) { navBackStackEntry ->
+		composable(route = "dest_view/{title}",
+			arguments = listOf(navArgument("title") {
+				type = NavType.StringType
+			})) { navBackStackEntry ->
 			val title = navBackStackEntry.arguments?.getString("title") ?: ""
-			DestScreen(
-				title = title,
+			DestScreen(title = title,
 				viewModel = viewModel,
 				onBackClick = onBackClick,
-				onItemClick = { i -> rootNavController.navigate("media_view/-1/$i") }
-			)
+				onItemClick = { i -> rootNavController.navigate("media_view/-1/$i") })
 		}
-		composable(
-			"media_view/-1/{i}",
-			arguments = listOf(navArgument("i") { type = NavType.IntType })
-		) { navBackStackEntry ->
+		composable("media_view/-1/{i}",
+			arguments = listOf(navArgument("i") { type = NavType.IntType })) { navBackStackEntry ->
 			val i = navBackStackEntry.arguments?.getInt("i") ?: 0
-			SMediaViewPager(
-				SMediaList = viewModel.currentSMediaList!!,
+			SMediaViewPager(SMediaList = viewModel.currentSMediaList!!,
 				initialPage = i,
 				onBackClick = onBackClick,
-				onMoreClick = onMoreClick
-			)
+				onMoreClick = onMoreClick)
 		}
 		composable(
 			"media_view_info",
 		) {
 			val imageInfoViewModel = hiltViewModel<ImageInfoViewModel>()
-			LaunchedEffect(
-				key1 = viewModel.currentSMedia,
-				block = {
-					viewModel.currentSMedia?.let { sMedia ->
-						imageInfoViewModel.setImage(sMedia.path, sMedia.isVideo)
-					}
+			LaunchedEffect(key1 = viewModel.currentSMedia, block = {
+				viewModel.currentSMedia?.let { sMedia ->
+					imageInfoViewModel.setImage(sMedia.path, sMedia.isVideo)
 				}
-			)
-			SMediaInfoComponent(
-				viewModel = imageInfoViewModel,
-				onBackClick = onBackClick
-			)
+			})
+			SMediaInfoComponent(viewModel = imageInfoViewModel, onBackClick = onBackClick)
 		}
 		composable(route = "faces_screen") {
-			val facesViewModel = hiltViewModel<FacesViewModel>()
-			FacesScreen(
-				viewModel = facesViewModel,
-				onItemClick = { index ->
-					viewModel.currentSMediaList =
-						facesViewModel.sFacesWithSMedia!![index].SMediaList
-					rootNavController.navigate("dest_view/People")
-				},
-				onBackClick = onBackClick
-			)
+			val facesViewModel =
+				hiltViewModel<FacesViewModel>(rootNavController.getViewModelStoreOwner(
+					rootNavController.graph.id))
+			FacesScreen(viewModel = facesViewModel,
+				onItemClick = { index -> onFaceItemClick(index, facesViewModel) },
+				onBackClick = onBackClick)
 		}
-
+		composable(route = "categories_screen") {
+			val categoriesViewModel =
+				hiltViewModel<CategoriesViewModel>(rootNavController.getViewModelStoreOwner(
+					rootNavController.graph.id))
+			CategoriesScreen(viewModel = categoriesViewModel,
+				onItemClick = { index -> onThingItemClick(index, categoriesViewModel) },
+				onBackClick = onBackClick)
+		}
 	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootView(viewModel: SMViewModel, rootNavController: NavHostController) {
+fun RootView(
+	viewModel: SMViewModel,
+	rootNavController: NavHostController,
+	onFaceItemClick: (Int, FacesViewModel) -> Unit,
+	onThingItemClick: (Int, CategoriesViewModel) -> Unit,
+) {
 	val navController = rememberNavController()
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDestination = navBackStackEntry?.destination
@@ -126,10 +132,8 @@ fun RootView(viewModel: SMViewModel, rootNavController: NavHostController) {
 			IconButton(onClick = {
 				context.startActivity(Intent(context, SettingsActivity::class.java))
 			}) {
-				Icon(
-					imageVector = Icons.Outlined.MoreVert,
-					contentDescription = stringResource(R.string.more)
-				)
+				Icon(imageVector = Icons.Outlined.MoreVert,
+					contentDescription = stringResource(R.string.more))
 			}
 		}, scrollBehavior = scrollBehavior)
 	}, bottomBar = {
@@ -154,7 +158,12 @@ fun RootView(viewModel: SMViewModel, rootNavController: NavHostController) {
 			}
 		}
 	}, modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) { paddingValues ->
-		NavContent(rootNavController, navController, viewModel, paddingValues)
+		NavContent(rootNavController,
+			navController,
+			viewModel,
+			paddingValues,
+			onFaceItemClick,
+			onThingItemClick)
 	}
 }
 
@@ -164,30 +173,38 @@ fun NavContent(
 	navController: NavHostController,
 	viewModel: SMViewModel,
 	paddingValues: PaddingValues,
+	onFaceItemClick: (Int, FacesViewModel) -> Unit,
+	onThingItemClick: (Int, CategoriesViewModel) -> Unit,
 ) {
 	NavHost(navController = navController, startDestination = "photos") {
 		composable("photos") {
-			PhotosScreen(viewModel = viewModel, paddingValues = paddingValues
-			) { i ->
+			PhotosScreen(viewModel = viewModel, paddingValues = paddingValues) { i ->
 				viewModel.currentSMediaList = viewModel.sMediaList
 				rootNavController.navigate("media_view/-1/$i")
 			}
 		}
 		composable("explore") {
-			ExploreScreen(
-				viewModel = viewModel,
+			val facesViewModel =
+				hiltViewModel<FacesViewModel>(rootNavController.getViewModelStoreOwner(
+					rootNavController.graph.id))
+			val categoriesViewModel =
+				hiltViewModel<CategoriesViewModel>(rootNavController.getViewModelStoreOwner(
+					rootNavController.graph.id))
+			ExploreScreen(viewModel = viewModel,
 				paddingValues = paddingValues,
-				onPeopleClick = { rootNavController.navigate("faces_screen") }
-			) { query ->
-				rootNavController.navigate("dest_view/$query")
-			}
+				onSearchAction = { query -> rootNavController.navigate("dest_view/$query") },
+				facesViewModel = facesViewModel,
+				onPeopleClick = { rootNavController.navigate("faces_screen") },
+				onFaceItemClick = { index -> onFaceItemClick(index, facesViewModel) },
+				categoriesViewModel = categoriesViewModel,
+				onThingsClick = { rootNavController.navigate("categories_screen") },
+				onThingItemClick = { index -> onThingItemClick(index, categoriesViewModel) })
 		}
 		composable("albums") {
-			FoldersScreen(viewModel = viewModel, paddingValues = paddingValues,
-				callback = { i ->
-					viewModel.getFolderContents(i)
-					rootNavController.navigate("dest_view/${viewModel.folderList?.get(i)?.name}")
-				})
+			FoldersScreen(viewModel = viewModel, paddingValues = paddingValues, callback = { i ->
+				viewModel.getFolderContents(i)
+				rootNavController.navigate("dest_view/${viewModel.folderList?.get(i)?.name}")
+			})
 		}
 	}
 }

@@ -3,27 +3,27 @@ package com.karthek.android.s.gallery.state.db
 import androidx.room.*
 
 @Entity
-data class SFace(
+data class SCategory(
 	@PrimaryKey
 	val id: Int,
 	val name: String,
 )
 
-@Entity(primaryKeys = ["faceId", "SMediaId"])
-data class SFaceSMediaCrossRef(
-	var faceId: Int,
-	var SMediaId: Int,
+@Entity(primaryKeys = ["categoryId", "SMediaId"])
+data class SCategorySMediaCrossRef(
+	val categoryId: Int,
+	val SMediaId: Int,
 )
 
-data class SFaceWithSMedia(
-	@Embedded val sFace: SFace,
+data class SCategoryWithSMedia(
+	@Embedded val sCategory: SCategory,
 	@Relation(
 		parentColumn = "id",
 		entity = SMedia::class,
 		entityColumn = "id",
 		associateBy = Junction(
-			value = SFaceSMediaCrossRef::class,
-			parentColumn = "faceId",
+			value = SCategorySMediaCrossRef::class,
+			parentColumn = "categoryId",
 			entityColumn = "SMediaId"
 		)
 	)

@@ -20,7 +20,10 @@ interface SMediaDao {
 	suspend fun insert(sMedia: SMedia)
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	suspend fun insertSFaces(sFace: Array<SFace>)
+	suspend fun insertSFaces(sFaces: Array<SFace>)
+
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertSCategories(sCategories: List<SCategory>)
 
 	@Insert
 	fun insertAll(sMedia: List<SMedia>)
@@ -33,8 +36,15 @@ interface SMediaDao {
 
 	@Transaction
 	@Query("SELECT * FROM SFace")
-	fun getSFaceWithSMedia(): List<SFaceWithSMedia>
+	suspend fun getSFacesWithSMedia(): List<SFaceWithSMedia>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	fun insertSFaceWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>)
+	suspend fun insertSFacesWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>)
+
+	@Transaction
+	@Query("SELECT * FROM SCategory")
+	suspend fun getSCategoriesWithSMedia(): List<SCategoryWithSMedia>
+
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertSCategoryWithSMedia(sCategorySMediaCrossRef: SCategorySMediaCrossRef)
 }

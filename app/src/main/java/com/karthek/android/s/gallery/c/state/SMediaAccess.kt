@@ -133,15 +133,25 @@ class SMediaAccess @Inject constructor(
 
 	suspend fun insertSMedia(sMedia: SMedia) = sMediaDao.insert(sMedia)
 	suspend fun insertSFaces(sFace: Array<SFace>) = sMediaDao.insertSFaces(sFace)
+	suspend fun insertSCategories(sCategories: List<SCategory>) =
+		sMediaDao.insertSCategories(sCategories)
 
 	suspend fun getLocalSMedia(): List<SMedia> = sMediaDao.all
-	suspend fun getSFaceWithSMedia(): List<SFaceWithSMedia> {
+	suspend fun getSFacesWithSMedia(): List<SFaceWithSMedia> {
 		return withContext(Dispatchers.IO) {
-			sMediaDao.getSFaceWithSMedia()
+			sMediaDao.getSFacesWithSMedia()
 		}
 	}
 
-	fun insertSFaceWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>) =
-		sMediaDao.insertSFaceWithSMedia(sFaceSMediaCrossRefs)
+	suspend fun insertSFacesWithSMedia(sFaceSMediaCrossRefs: Array<SFaceSMediaCrossRef>) =
+		sMediaDao.insertSFacesWithSMedia(sFaceSMediaCrossRefs)
 
+	suspend fun getSCategoriesWithSMedia(): List<SCategoryWithSMedia> {
+		return withContext(Dispatchers.IO) {
+			sMediaDao.getSCategoriesWithSMedia()
+		}
+	}
+
+	suspend fun insertSCategoryWithSMedia(sCategorySMediaCrossRef: SCategorySMediaCrossRef) =
+		sMediaDao.insertSCategoryWithSMedia(sCategorySMediaCrossRef)
 }

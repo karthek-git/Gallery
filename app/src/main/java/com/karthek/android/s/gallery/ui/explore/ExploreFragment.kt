@@ -68,6 +68,11 @@ class ExploreFragment : Fragment() {
 	}
 
 	private fun runClassifier() {
+		requireContext().assets.open("labels.txt").bufferedReader().useLines {
+			it.forEach { s->
+				Log.v("label", "name : $s eee")
+			}
+		}
 		if (uri == null) return
 		//ml_kit();
 		//tf_lite();
@@ -93,7 +98,7 @@ class ExploreFragment : Fragment() {
 
 	private fun classii() {
 		val classify = Classify(requireContext())
-		binding!!.textDashboard.text = classify.getCategory(getBitmap(224, 224)!!)
+		binding!!.textDashboard.text = classify.getCategory(getBitmap(224, 224)!!).first
 	}
 
 	private fun tfLite() {

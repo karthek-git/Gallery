@@ -33,20 +33,23 @@ class Classify @Inject constructor(@ApplicationContext context: Context) {
 		model.close()
 	}
 
-	fun getCategory(bitmap: Bitmap): String {
+	fun getCategory(bitmap: Bitmap): Pair<String, Int> {
 		val tensorImage = TensorImage.fromBitmap(bitmap)
 		val outputs = model.process(tensorImage)
 		val probability =
 			outputs.probabilityAsCategoryList.filter { category -> category.score > 0.05f }
-		return StringBuilder().apply { probability.forEach { p -> append(p.label) } }
-			.append(getSceneCategory(tensorImage))
-			.toString()
+		val sceneCategory = getSceneCategory(tensorImage)
+		return Pair(
+			StringBuilder().apply { probability.forEach { p -> append(p.label) } }
+				.append(sceneCategory.second)
+				.toString(),
+			sceneCategory.first
+		)
 	}
 
-	private fun getSceneCategory(tensorImage: TensorImage): String {
+	private fun getSceneCategory(tensorImage: TensorImage): Pair<Int, String> {
 		return imageSceneClassifier.classify(tensorImage)[0].categories
-			.maxBy { category -> category.score }
-			.label
+			.maxBy { category -> category.score }.run { Pair(index,label) }
 	}
 }
 
