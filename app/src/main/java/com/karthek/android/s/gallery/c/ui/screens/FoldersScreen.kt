@@ -70,9 +70,7 @@ fun FoldersGrid(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
-	Column(modifier = Modifier
-		.padding(4.dp)
-		.clickable { callback(index) }) {
+	Column(modifier = Modifier.padding(4.dp)) {
 		AsyncImage(
 			model = ImageRequest.Builder(LocalContext.current)
 				.data(folder.previewSMedia)
@@ -82,7 +80,8 @@ fun FolderItem(folder: MFolder, index: Int, callback: (i: Int) -> Unit) {
 				.size(150.dp)
 				.padding(1.dp)
 				.clip(RoundedCornerShape(10.dp))
-				.background(MaterialTheme.colorScheme.onSurfaceVariant),
+				.background(MaterialTheme.colorScheme.onSurfaceVariant)
+				.clickable { callback(index) },
 			contentScale = ContentScale.Crop
 		)
 		Text(

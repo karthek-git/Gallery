@@ -65,6 +65,6 @@ fun SearchTextField(value: String, onValueChange: (String) -> Unit, onSearchActi
 		shape = CircleShape,
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(16.dp),
+			.padding(8.dp),
 	)
 }

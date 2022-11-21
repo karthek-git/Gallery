@@ -17,7 +17,7 @@ class SMediaImageSourceProvider(private val context: Context, private val sMedia
 		}
 	}
 
-	fun getInputStream(context: Context, sMedia: SMedia): FileInputStream {
+	private fun getInputStream(context: Context, sMedia: SMedia): FileInputStream {
 		return sMedia.uri?.let { uri ->
 			context.contentResolver.openInputStream(uri) as FileInputStream
 		} ?: FileInputStream(sMedia.path)

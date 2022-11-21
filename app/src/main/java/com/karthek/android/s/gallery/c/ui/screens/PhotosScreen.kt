@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.karthek.android.s.gallery.c.state.SMViewModel
+import com.karthek.android.s.gallery.c.state.SMediaStateList
 import com.karthek.android.s.gallery.state.db.SMedia
 
 @Composable
@@ -23,21 +24,21 @@ fun PhotosScreen(
 	paddingValues: PaddingValues,
 	callback: (i: Int) -> Unit,
 ) {
-	PhotosScreenContent(SMediaList = viewModel.sMediaList, paddingValues, callback)
+	PhotosScreenContent(sMediaStateList = viewModel.sMediaList, paddingValues, callback)
 }
 
 @Composable
 fun PhotosScreenContent(
-	SMediaList: List<SMedia>?,
+	sMediaStateList: SMediaStateList,
 	paddingValues: PaddingValues = PaddingValues(),
 	callback: (i: Int) -> Unit,
 ) {
-	if (SMediaList == null) {
+	if (sMediaStateList.isLoading.value) {
 		ContentLoading()
-	} else if (SMediaList.isEmpty()) {
+	} else if (sMediaStateList.list.isEmpty()) {
 		ContentEmpty()
 	} else {
-		SMediaGrid(SMediaList = SMediaList, paddingValues, callback)
+		SMediaGrid(SMediaList = sMediaStateList.list, paddingValues, callback)
 	}
 }
 

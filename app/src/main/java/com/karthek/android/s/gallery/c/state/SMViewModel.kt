@@ -1,8 +1,7 @@
 package com.karthek.android.s.gallery.c.state
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.karthek.android.s.gallery.c.a.MFolder
@@ -16,42 +15,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SMViewModel @Inject constructor(private val repo: SMediaAccess) : ViewModel() {
-	var sMediaList by mutableStateOf<List<SMedia>?>(null)
+	var sMediaList = SMediaStateList()
 	var folderList by mutableStateOf<List<MFolder>?>(null)
-	var searchInProgress by mutableStateOf(false)
-	var currentSMediaList by mutableStateOf<List<SMedia>?>(null)
+	var currentSMediaList = SMediaStateList()
 	var currentSMedia: SMedia? = null
 
 	fun getFolderContents(index: Int) {
 		val folder = folderList!![index]
-		if (folder.l.value == null) {
-			currentSMediaList = null
-			viewModelScope.launch {
-				folder.l.value =
-					withContext(Dispatchers.Default) { SoftReference(repo.getSMedia(folder.path)) }
-				currentSMediaList = folder.l.value?.get()
+		folder.l.value?.get()?.let {
+			currentSMediaList.list = it
+			return
+		}
+		viewModelScope.launch {
+			currentSMediaList.isLoading.value = true
+			folder.l.value = withContext(Dispatchers.Default) {
+				SoftReference(repo.getSMedia(folder.path).toMutableStateList())
 			}
-		} else {
-			currentSMediaList = folder.l.value?.get()
+			folder.l.value?.get()?.let { currentSMediaList.list = it }
+			currentSMediaList.isLoading.value = false
 		}
 	}
 
 	fun onSearchAction(query: String) {
 		viewModelScope.launch {
-			searchInProgress = true
-			currentSMediaList = null
-			currentSMediaList = withContext(Dispatchers.IO) {
+			currentSMediaList.isLoading.value = true
+			currentSMediaList.list = withContext(Dispatchers.IO) {
 				repo.searchSMedia(query.trim())
-			}
-			searchInProgress = false
+			}.toMutableStateList()
+			currentSMediaList.isLoading.value = false
 		}
 	}
 
 	init {
 		viewModelScope.launch {
-			sMediaList = repo.getSMedia()
+			sMediaList.isLoading.value = true
+			sMediaList.list = repo.getSMedia().toMutableStateList()
+			sMediaList.isLoading.value = false
 
 			folderList = repo.getFolders()
 		}
 	}
 }
+
+data class SMediaStateList(
+	var list: SnapshotStateList<SMedia> = mutableStateListOf(),
+	val isLoading: MutableState<Boolean> = mutableStateOf(false),
+)

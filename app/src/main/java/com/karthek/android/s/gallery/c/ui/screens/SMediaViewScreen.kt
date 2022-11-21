@@ -2,11 +2,14 @@ package com.karthek.android.s.gallery.c.ui.screens
 
 import android.app.Activity
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.VideoView
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -16,6 +19,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,7 +56,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SMediaViewPager(
-	SMediaList: List<SMedia>,
+	sMediaList: SnapshotStateList<SMedia>,
 	initialPage: Int,
 	onBackClick: () -> Unit,
 	onMoreClick: (SMedia) -> Unit,
@@ -71,16 +75,28 @@ fun SMediaViewPager(
 			inSlideShow = true
 			inImmersiveMode = true
 			toggleSystemBars(window, view, true, systemUiController)
-			slideShowHandler(SMediaList.size, pagerState)
+			slideShowHandler(sMediaList.size, pagerState)
 			inImmersiveMode = false
 			inSlideShow = false
 		}
 		Unit
 	}
+	val trashLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.StartIntentSenderForResult(),
+		onResult = { activityResult ->
+			if (activityResult.resultCode == Activity.RESULT_OK) {
+				coroutineScope.launch {
+					val deletedIndex = pagerState.currentPage
+					pagerState.animateScrollToPage(deletedIndex + 1)
+					sMediaList.removeAt(deletedIndex)
+				}
+			}
+		}
+	)
 	Surface(color = Color.Black) {
 		Box(modifier = Modifier.fillMaxSize()) {
-			HorizontalPager(count = SMediaList.size, state = pagerState) {
-				SMediaView(SMediaList[it]) {
+			HorizontalPager(count = sMediaList.size, state = pagerState) {
+				SMediaView(sMediaList[it]) {
 					if (inSlideShow) return@SMediaView
 					inImmersiveMode = !inImmersiveMode
 					toggleSystemBars(window, view, inImmersiveMode, systemUiController)
@@ -97,9 +113,16 @@ fun SMediaViewPager(
 			}
 			if (!inImmersiveMode) {
 				SMediaViewControls(
-					sMedia = SMediaList[pagerState.currentPage],
+					sMedia = sMediaList[pagerState.currentPage],
 					onBackClick = onBackClick,
 					onMoreClick = onMoreClick,
+					onTrashClick = {
+						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+							trashHandler(context, sMediaList[pagerState.currentPage])
+						} else {
+							trashHandler(context, sMediaList[pagerState.currentPage], trashLauncher)
+						}
+					},
 					onSlideShowClick = onSlideShowClick
 				)
 			}
@@ -169,6 +192,7 @@ fun BoxScope.SMediaViewControls(
 	sMedia: SMedia,
 	onBackClick: () -> Unit,
 	onMoreClick: (SMedia) -> Unit,
+	onTrashClick: () -> Unit,
 	onSlideShowClick: () -> Unit,
 ) {
 	val scrimColor = if (!isSystemInDarkTheme()) {
@@ -197,7 +221,10 @@ fun BoxScope.SMediaViewControls(
 			modifier = Modifier.align(Alignment.TopCenter)
 		)
 		SMediaViewToolbar(
-			sMedia = sMedia, onSlideShowClick = onSlideShowClick, modifier = Modifier
+			sMedia = sMedia,
+			onTrashClick = onTrashClick,
+			onSlideShowClick = onSlideShowClick,
+			modifier = Modifier
 				.align(Alignment.BottomCenter)
 				.background(color = Color.Black)
 				.navigationBarsPadding()
@@ -206,8 +233,14 @@ fun BoxScope.SMediaViewControls(
 }
 
 @Composable
-fun SMediaViewToolbar(sMedia: SMedia, modifier: Modifier, onSlideShowClick: () -> Unit) {
+fun SMediaViewToolbar(
+	sMedia: SMedia,
+	modifier: Modifier,
+	onTrashClick: () -> Unit,
+	onSlideShowClick: () -> Unit,
+) {
 	val context = LocalContext.current
+
 	Row(
 		horizontalArrangement = Arrangement.SpaceEvenly,
 		modifier = modifier
@@ -221,8 +254,8 @@ fun SMediaViewToolbar(sMedia: SMedia, modifier: Modifier, onSlideShowClick: () -
 			title = stringResource(R.string.edit),
 			onClick = { editInHandler(context, sMedia) })
 		ToolbarItem(imageVector = Icons.Outlined.Delete,
-			title = stringResource(id = R.string.delete),
-			onClick = {})
+			title = stringResource(id = R.string.trash),
+			onClick = onTrashClick)
 		ToolbarItem(imageVector = Icons.Outlined.ExitToApp,
 			title = stringResource(id = R.string.use_as),
 			onClick = { useAsHandler(context, sMedia) })

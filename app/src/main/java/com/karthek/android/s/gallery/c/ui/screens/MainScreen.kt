@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -52,39 +53,46 @@ fun MainScreenContent(viewModel: SMViewModel) {
 		rootNavController.navigate("media_view_info")
 	}
 	val onFaceItemClick = { index: Int, facesViewModel: FacesViewModel ->
-		viewModel.currentSMediaList = facesViewModel.sFacesWithSMedia!![index].SMediaList
+		viewModel.currentSMediaList.list = facesViewModel.sFacesWithSMedia!![index].SMediaList.toMutableStateList()
 		rootNavController.navigate("dest_view/People")
 	}
 	val onThingItemClick = { index: Int, categoriesViewModel: CategoriesViewModel ->
 		val sCategoryWithSMedia = categoriesViewModel.sCategoriesWithSMedia!![index]
-		viewModel.currentSMediaList = sCategoryWithSMedia.SMediaList
+		viewModel.currentSMediaList.list = sCategoryWithSMedia.SMediaList.toMutableStateList()
 		rootNavController.navigate("dest_view/${sCategoryWithSMedia.sCategory.name}")
 	}
 	NavHost(navController = rootNavController, startDestination = "root_host") {
 		composable(route = "root_host") {
-			RootView(viewModel, rootNavController, onFaceItemClick, onThingItemClick)
+			RootView(viewModel = viewModel,
+				rootNavController = rootNavController,
+				onFavouritesClick = {},
+				onTrashClick = {},
+				onFaceItemClick = onFaceItemClick,
+				onThingItemClick = onThingItemClick)
 		}
-		composable(route = "dest_view/{title}",
+		composable(
+			route = "dest_view/{title}",
 			arguments = listOf(navArgument("title") {
 				type = NavType.StringType
-			})) { navBackStackEntry ->
+			})
+		) { navBackStackEntry ->
 			val title = navBackStackEntry.arguments?.getString("title") ?: ""
 			DestScreen(title = title,
 				viewModel = viewModel,
 				onBackClick = onBackClick,
 				onItemClick = { i -> rootNavController.navigate("media_view/-1/$i") })
 		}
-		composable("media_view/-1/{i}",
-			arguments = listOf(navArgument("i") { type = NavType.IntType })) { navBackStackEntry ->
+		composable(
+			route = "media_view/-1/{i}",
+			arguments = listOf(navArgument("i") { type = NavType.IntType })
+		) { navBackStackEntry ->
 			val i = navBackStackEntry.arguments?.getInt("i") ?: 0
-			SMediaViewPager(SMediaList = viewModel.currentSMediaList!!,
+			SMediaViewPager(sMediaList = viewModel.currentSMediaList.list,
 				initialPage = i,
 				onBackClick = onBackClick,
 				onMoreClick = onMoreClick)
 		}
-		composable(
-			"media_view_info",
-		) {
+		composable(route = "media_view_info") {
 			val imageInfoViewModel = hiltViewModel<ImageInfoViewModel>()
 			LaunchedEffect(key1 = viewModel.currentSMedia, block = {
 				viewModel.currentSMedia?.let { sMedia ->
@@ -117,6 +125,8 @@ fun MainScreenContent(viewModel: SMViewModel) {
 fun RootView(
 	viewModel: SMViewModel,
 	rootNavController: NavHostController,
+	onFavouritesClick: () -> Unit,
+	onTrashClick: () -> Unit,
 	onFaceItemClick: (Int, FacesViewModel) -> Unit,
 	onThingItemClick: (Int, CategoriesViewModel) -> Unit,
 ) {
@@ -162,6 +172,8 @@ fun RootView(
 			navController,
 			viewModel,
 			paddingValues,
+			onFavouritesClick,
+			onTrashClick,
 			onFaceItemClick,
 			onThingItemClick)
 	}
@@ -173,6 +185,8 @@ fun NavContent(
 	navController: NavHostController,
 	viewModel: SMViewModel,
 	paddingValues: PaddingValues,
+	onFavouritesClick: () -> Unit,
+	onTrashClick: () -> Unit,
 	onFaceItemClick: (Int, FacesViewModel) -> Unit,
 	onThingItemClick: (Int, CategoriesViewModel) -> Unit,
 ) {
@@ -194,6 +208,8 @@ fun NavContent(
 				paddingValues = paddingValues,
 				onSearchAction = { query -> rootNavController.navigate("dest_view/$query") },
 				facesViewModel = facesViewModel,
+				onFavouritesClick = onFavouritesClick,
+				onTrashClick = onTrashClick,
 				onPeopleClick = { rootNavController.navigate("faces_screen") },
 				onFaceItemClick = { index -> onFaceItemClick(index, facesViewModel) },
 				categoriesViewModel = categoriesViewModel,

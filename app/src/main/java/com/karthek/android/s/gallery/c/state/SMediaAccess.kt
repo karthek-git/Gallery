@@ -68,7 +68,7 @@ class SMediaAccess @Inject constructor(
 					val isVideo = cursor.getInt(typeColumn) == FileColumns.MEDIA_TYPE_VIDEO
 					list.add(
 						SMedia(
-							id, ContentUris.withAppendedId(uri, id.toLong()),
+							id,
 							cursor.getString(pathColumn),
 							cursor.getString(nameColumn),
 							cursor.getLong(dateColumn),

@@ -5,10 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -39,6 +43,8 @@ fun ExploreScreen(
 	viewModel: SMViewModel,
 	paddingValues: PaddingValues,
 	onSearchAction: (String) -> Unit,
+	onFavouritesClick: () -> Unit,
+	onTrashClick: () -> Unit,
 	facesViewModel: FacesViewModel,
 	onPeopleClick: () -> Unit,
 	onFaceItemClick: (Int) -> Unit,
@@ -48,11 +54,12 @@ fun ExploreScreen(
 ) {
 	ExploreScreenContent(
 		paddingValues = paddingValues,
-		showProgressBar = viewModel.searchInProgress,
 		onSearchAction = { query ->
 			viewModel.onSearchAction(query)
 			onSearchAction(query)
 		},
+		onFavouritesClick = onFavouritesClick,
+		onTrashClick = onTrashClick,
 		sFacesWithSMedia = facesViewModel.sFacesWithSMedia,
 		onPeopleClick = onPeopleClick,
 		onFaceItemClick = onFaceItemClick,
@@ -66,8 +73,9 @@ fun ExploreScreen(
 @Composable
 fun ExploreScreenContent(
 	paddingValues: PaddingValues,
-	showProgressBar: Boolean,
 	onSearchAction: (String) -> Unit,
+	onFavouritesClick: () -> Unit,
+	onTrashClick: () -> Unit,
 	sFacesWithSMedia: List<SFaceWithSMedia>?,
 	onPeopleClick: () -> Unit,
 	onFaceItemClick: (Int) -> Unit,
@@ -77,14 +85,16 @@ fun ExploreScreenContent(
 ) {
 	var textFieldValue by rememberSaveable { mutableStateOf("") }
 	Surface(modifier = Modifier.padding(paddingValues)) {
-		Column {
+		Column(modifier = Modifier
+			.padding(8.dp)
+			.verticalScroll(rememberScrollState())
+		) {
 			SearchTextField(
-				textFieldValue,
+				value = textFieldValue,
 				onValueChange = { textFieldValue = it },
-				onSearchAction = { onSearchAction(textFieldValue) })
-			if (showProgressBar) {
-				ContentLoading()
-			}
+				onSearchAction = { onSearchAction(textFieldValue) }
+			)
+			DestinationRow(onFavouritesClick, onTrashClick)
 			if (sFacesWithSMedia != null && sFacesWithSMedia.isNotEmpty()) {
 				FacesRow(
 					sFacesWithSMedia = sFacesWithSMedia,
@@ -128,7 +138,7 @@ fun FacesRow(
 	onPeopleClick: () -> Unit,
 	onFaceItemClick: (Int) -> Unit,
 ) {
-	Column(modifier = Modifier.padding(8.dp)) {
+	Column {
 		ExploreRowHeader(id = R.string.people, onMoreClick = onPeopleClick)
 		LazyRow {
 			itemsIndexed(sFacesWithSMedia) { i, c ->
@@ -140,9 +150,7 @@ fun FacesRow(
 
 @Composable
 fun FaceItem(sMedia: SMedia, index: Int, callback: (i: Int) -> Unit) {
-	Column(modifier = Modifier
-		.padding(4.dp)
-		.clickable { callback(index) }) {
+	Column(modifier = Modifier.padding(4.dp)) {
 		AsyncImage(
 			model = ImageRequest.Builder(LocalContext.current)
 				.data(sMedia)
@@ -151,7 +159,8 @@ fun FaceItem(sMedia: SMedia, index: Int, callback: (i: Int) -> Unit) {
 			modifier = Modifier
 				.size(90.dp)
 				.padding(1.dp)
-				.clip(CircleShape),
+				.clip(CircleShape)
+				.clickable { callback(index) },
 			contentScale = ContentScale.Crop
 		)
 	}
@@ -163,7 +172,7 @@ fun CategoriesRow(
 	onThingsClick: () -> Unit,
 	onThingItemClick: (Int) -> Unit,
 ) {
-	Column(modifier = Modifier.padding(8.dp)) {
+	Column {
 		ExploreRowHeader(id = R.string.things, onMoreClick = onThingsClick)
 		LazyRow {
 			itemsIndexed(sCategoriesWithSMedia) { i, c ->
@@ -175,9 +184,7 @@ fun CategoriesRow(
 
 @Composable
 fun CategoryItem(sCategoryWithSMedia: SCategoryWithSMedia, index: Int, callback: (i: Int) -> Unit) {
-	Column(modifier = Modifier
-		.padding(8.dp)
-	) {
+	Column(modifier = Modifier.padding(8.dp)) {
 		AsyncImage(
 			model = ImageRequest.Builder(LocalContext.current)
 				.data(sCategoryWithSMedia.SMediaList.first())
@@ -191,11 +198,54 @@ fun CategoryItem(sCategoryWithSMedia: SCategoryWithSMedia, index: Int, callback:
 			contentScale = ContentScale.Crop
 		)
 		Text(text = sCategoryWithSMedia.sCategory.name,
-			color = Color.White,
+			color = MaterialTheme.colorScheme.onSurface,
 			style = MaterialTheme.typography.labelLarge,
 			modifier = Modifier
 				.align(Alignment.CenterHorizontally)
 				.padding(4.dp)
 		)
+	}
+}
+
+@Composable
+fun DestinationRow(onFavouritesClick: () -> Unit, onTrashClick: () -> Unit) {
+	Row(modifier = Modifier.fillMaxWidth()) {
+		DestinationCard(
+			icon = Icons.Outlined.FavoriteBorder,
+			text = stringResource(R.string.favourites),
+			modifier = Modifier.weight(1f),
+			onClick = onFavouritesClick
+		)
+		DestinationCard(
+			icon = Icons.Outlined.Delete,
+			text = stringResource(R.string.trash),
+			modifier = Modifier.weight(1f),
+			onClick = onTrashClick
+		)
+	}
+}
+
+@Composable
+fun DestinationCard(icon: ImageVector, text: String, modifier: Modifier, onClick: () -> Unit) {
+	ElevatedCard(shape = RoundedCornerShape(16.dp),
+		elevation = CardDefaults.elevatedCardElevation(8.dp),
+		modifier = modifier
+			.height(70.dp)
+			.padding(8.dp)
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			modifier = Modifier
+				.fillMaxSize()
+				.clickable(onClick = onClick)
+		) {
+			Icon(
+				imageVector = icon,
+				contentDescription = text,
+				tint = MaterialTheme.colorScheme.primary,
+				modifier = Modifier.padding(16.dp)
+			)
+			Text(text = text, style = MaterialTheme.typography.labelLarge, modifier = Modifier)
+		}
 	}
 }

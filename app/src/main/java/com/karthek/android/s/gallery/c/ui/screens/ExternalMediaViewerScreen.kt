@@ -2,6 +2,8 @@ package com.karthek.android.s.gallery.c.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +22,7 @@ fun ExternalMediaViewerScreen(sMedia: SMedia, onFinish: () -> Unit) {
 
 	NavHost(navController = navController, startDestination = "media_view") {
 		composable(route = "media_view") {
-			SMediaViewPager(SMediaList = listOf(sMedia),
+			SMediaViewPager(sMediaList = remember { mutableStateListOf(sMedia) },
 				initialPage = 0,
 				onBackClick = onFinish,
 				onMoreClick = onMoreClick)

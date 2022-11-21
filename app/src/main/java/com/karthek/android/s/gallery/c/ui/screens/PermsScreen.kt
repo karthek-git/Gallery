@@ -3,6 +3,7 @@ package com.karthek.android.s.gallery.c.ui.screens
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -14,31 +15,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.karthek.android.s.gallery.BuildConfig
 
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Perms(content: @Composable () -> Unit) {
-	//todo 33
-	val storagePermissionState = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
-	when (storagePermissionState.status) {
-		PermissionStatus.Granted -> {
-			content()
-		}
-		is PermissionStatus.Denied -> {
-			PermissionNotGrantedContent(storagePermissionState)
-		}
+	//todo better handle
+	val storagePermissionState = rememberMultiplePermissionsState(getPermissions())
+
+	if (storagePermissionState.allPermissionsGranted) {
+		content()
+	} else {
+		PermissionNotGrantedContent(onClick = {
+			storagePermissionState.launchMultiplePermissionRequest()
+		})
 	}
 }
 
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionNotGrantedContent(permissionState: PermissionState) {
+fun PermissionNotGrantedContent(onClick: () -> Unit) {
 	Column(
 		modifier = Modifier.fillMaxSize(),
 		verticalArrangement = Arrangement.Center,
@@ -46,7 +44,7 @@ fun PermissionNotGrantedContent(permissionState: PermissionState) {
 	) {
 		Text("Please grant the storage permission.")
 		Spacer(modifier = Modifier.height(32.dp))
-		Button(onClick = { permissionState.launchPermissionRequest() }) {
+		Button(onClick = onClick) {
 			Text(stringResource(android.R.string.ok))
 		}
 	}
@@ -74,4 +72,21 @@ fun PermissionNotAvailableContent() {
 			Text("Open Settings")
 		}
 	}
+}
+
+fun getPermissions(): List<String> {
+	val requiredPermissions = mutableListOf<String>()
+	when {
+		Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2 -> {
+			requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+			requiredPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+		}
+		Build.VERSION.SDK_INT > Build.VERSION_CODES.P -> {
+			requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+		}
+		else -> {
+			requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+		}
+	}
+	return requiredPermissions
 }

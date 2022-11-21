@@ -2,6 +2,8 @@ package com.karthek.android.s.gallery.c.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -33,7 +35,7 @@ fun SMediaInfoComponent(viewModel: ImageInfoViewModel, onBackClick: () -> Unit) 
 
 @Composable
 fun SMediaInfoComponentContent(viewModel: ImageInfoViewModel, modifier: Modifier) {
-	Column(modifier = modifier) {
+	Column(modifier = modifier.verticalScroll(rememberScrollState())) {
 		SMediaInfoItem(
 			headLineText = viewModel.album,
 			supportingText = viewModel.path,
