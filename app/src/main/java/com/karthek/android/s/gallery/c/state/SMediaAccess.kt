@@ -41,7 +41,6 @@ class SMediaAccess @Inject constructor(
 				timeColumn,
 				FileColumns.MEDIA_TYPE
 			)
-
 			var selection = "${FileColumns.MEDIA_TYPE} IN (?, ?)"
 			if (dir.isNotEmpty()) selection += " AND ${FileColumns.DATA} LIKE '$dir%'" +
 					" AND ${FileColumns.DATA} NOT GLOB '$dir/*[/]*'"

@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.karthek.android.s.gallery.c.state.ImageInfoViewModel
 
@@ -62,6 +63,9 @@ fun SMediaInfoComponentContent(viewModel: ImageInfoViewModel, modifier: Modifier
 				icon = Icons.Outlined.Camera
 			)
 		}
+		SMediaInfoItem(headLineText = viewModel.mimetype,
+			style = MaterialTheme.typography.titleMedium,
+			icon = Icons.Outlined.Info)
 	}
 }
 
@@ -88,10 +92,13 @@ fun SMediaInfoItem(
 @Composable
 fun SMediaInfoItem(
 	headLineText: String,
+	style: TextStyle = MaterialTheme.typography.bodyMedium,
 	icon: ImageVector,
 ) {
 	ListItem(
-		headlineText = { Text(text = headLineText, style = MaterialTheme.typography.bodyMedium) },
+		headlineText = {
+			Text(text = headLineText, fontWeight = FontWeight.SemiBold, style = style)
+		},
 		leadingContent = { Icon(imageVector = icon, contentDescription = "") },
 	)
 }

@@ -2,6 +2,7 @@ package com.karthek.android.s.gallery.c.state
 
 import android.app.Application
 import android.graphics.BitmapFactory
+import android.media.MediaCodecInfo
 import android.media.MediaMetadataRetriever
 import android.text.format.Formatter
 import androidx.annotation.Px
@@ -44,6 +45,12 @@ class ImageInfoViewModel @Inject constructor(private var application: Applicatio
 
 	var isVideo by mutableStateOf(false)
 
+	var mimetype by mutableStateOf("")
+
+	var videoCodec by mutableStateOf("")
+
+	var audioCodec by mutableStateOf("")
+
 	fun setImage(path: String, isVideo: Boolean) {
 		this.path = path
 		this.isVideo = isVideo
@@ -63,38 +70,41 @@ class ImageInfoViewModel @Inject constructor(private var application: Applicatio
 
 	private fun loadImageInfo(file: File, simpleDateFormat: SimpleDateFormat) {
 		try {
-			val exifInterface = ExifInterface(file)
-			if (!exifInterface.hasAttribute(ExifInterface.TAG_EXIF_VERSION)) {
-				hasExifMetaData = false
-				val bitmapOpts = BitmapFactory.Options()
-				bitmapOpts.inJustDecodeBounds = true
-				BitmapFactory.decodeFile(path, bitmapOpts)
-				setSizeField(bitmapOpts.outWidth, bitmapOpts.outHeight, file.length())
-			} else {
-				hasExifMetaData = true
-				takenDate =
-					"Taken: ${simpleDateFormat.format(Date(exifInterface.dateTimeOriginal!!))}"
-				oem =
-					exifInterface.getAttribute(ExifInterface.TAG_MAKE) + " " +
-							exifInterface.getAttribute(ExifInterface.TAG_MODEL)
-				val length = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0)
-				val width = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0)
-				setSizeField(width, length, file.length())
-				val aperture =
-					exifInterface.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, 0.0)
-				val exposureTime = (0.5 + 1 / exifInterface.getAttributeDouble(
-					ExifInterface.TAG_EXPOSURE_TIME,
-					0.0
-				)).toInt()
-				val focalLength =
-					exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.0)
-				val iso = exifInterface.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
-				params =
-					String.format(
-						Locale.ENGLISH, "f/%.1f   1/%d   %.2fmm   ISO%s",
+			val bitmapOpts = BitmapFactory.Options()
+			bitmapOpts.inJustDecodeBounds = true
+			BitmapFactory.decodeFile(path, bitmapOpts)
+			mimetype = bitmapOpts.outMimeType
+			if (ExifInterface.isSupportedMimeType(mimetype)) {
+				val exifInterface = ExifInterface(file)
+				hasExifMetaData = exifInterface.hasAttribute(ExifInterface.TAG_EXIF_VERSION)
+				if (hasExifMetaData) {
+					hasExifMetaData = true
+					takenDate =
+						"Taken: ${simpleDateFormat.format(Date(exifInterface.dateTimeOriginal!!))}"
+					oem =
+						exifInterface.getAttribute(ExifInterface.TAG_MAKE) + " " + exifInterface.getAttribute(
+							ExifInterface.TAG_MODEL)
+					val length = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, 0)
+					val width = exifInterface.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, 0)
+					setSizeField(width, length, file.length())
+					val aperture =
+						exifInterface.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, 0.0)
+					val exposureTime =
+						(0.5 + 1 / exifInterface.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME,
+							0.0)).toInt()
+					val focalLength =
+						exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0.0)
+					val iso = exifInterface.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
+					params = String.format(Locale.ENGLISH,
+						"f/%.1f   1/%d   %.2fmm   ISO%s",
 						aperture,
-						exposureTime, focalLength, iso
-					)
+						exposureTime,
+						focalLength,
+						iso)
+				}
+			}
+			if (!hasExifMetaData) {
+				setSizeField(bitmapOpts.outWidth, bitmapOpts.outHeight, file.length())
 			}
 		} catch (e: IOException) {
 			e.printStackTrace()
@@ -106,11 +116,10 @@ class ImageInfoViewModel @Inject constructor(private var application: Applicatio
 		val height: Int
 		MediaMetadataRetriever().use { retriever ->
 			retriever.setDataSource(file.path)
-			width = retriever
-				.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+			mimetype = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE) ?: ""
+			width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
 				?.toIntOrNull() ?: 0
-			height = retriever
-				.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+			height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
 				?.toIntOrNull() ?: 0
 		}
 		setSizeField(width, height, file.length())
@@ -118,9 +127,11 @@ class ImageInfoViewModel @Inject constructor(private var application: Applicatio
 
 	private fun setSizeField(@Px width: Int, @Px height: Int, fileSize: Long) {
 		val mp = ((width * height) / 1000000f).roundToInt()
-		size = String.format(
-			Locale.ENGLISH, "%dMP   %sx%s   %s", mp, height, width,
-			Formatter.formatFileSize(application, fileSize)
-		)
+		size = String.format(Locale.ENGLISH,
+			"%dMP   %sx%s   %s",
+			mp,
+			height,
+			width,
+			Formatter.formatFileSize(application, fileSize))
 	}
 }

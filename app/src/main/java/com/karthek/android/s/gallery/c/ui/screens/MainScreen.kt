@@ -53,7 +53,8 @@ fun MainScreenContent(viewModel: SMViewModel) {
 		rootNavController.navigate("media_view_info")
 	}
 	val onFaceItemClick = { index: Int, facesViewModel: FacesViewModel ->
-		viewModel.currentSMediaList.list = facesViewModel.sFacesWithSMedia!![index].SMediaList.toMutableStateList()
+		viewModel.currentSMediaList.list =
+			facesViewModel.sFacesWithSMedia!![index].SMediaList.toMutableStateList()
 		rootNavController.navigate("dest_view/People")
 	}
 	val onThingItemClick = { index: Int, categoriesViewModel: CategoriesViewModel ->

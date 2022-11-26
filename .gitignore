@@ -16,6 +16,7 @@ app/release
 /.idea/compiler.xml
 /.idea/jarRepositories.xml
 /.idea/deploymentTargetDropDown.xml
+/.idea/androidTestResultsUserPreferences.xml
 
 .DS_Store
 /build

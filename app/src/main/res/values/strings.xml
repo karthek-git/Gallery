@@ -47,6 +47,7 @@
 	<string name="things">Things</string>
 	<string name="favourites">Favourites</string>
 	<string name="trash">Trash</string>
+	<string name="video">video</string>
 
 	<plurals name="items">
 		<item quantity="one">%d item</item>
