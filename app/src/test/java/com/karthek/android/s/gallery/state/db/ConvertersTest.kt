@@ -13,6 +13,6 @@ class ConvertersTest {
 	fun floatArraysFromByteArrays() {
 		val converters = Converters()
 		val byteArrays = converters.byteArrayFromFloatArrays(listOf(floatArrayOf(0f, 1f, 3f)))
-		assertArrayEquals(floatArrayOf(0f, 1f, 3f), converters.floatArraysFromByteArrays(byteArrays)[0],0f)
+		assertArrayEquals(floatArrayOf(0f, 1f, 3f),	converters.floatArraysFromByteArrays(byteArrays)?.get(0),0f)
 	}
 }

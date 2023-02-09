@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.WorkerParameters
 import com.karthek.android.s.gallery.R
-import com.karthek.android.s.gallery.c.state.Prefs
-import com.karthek.android.s.gallery.c.state.SMediaAccess
+import com.karthek.android.s.gallery.state.Prefs
+import com.karthek.android.s.gallery.state.SMediaAccess
 import com.karthek.android.s.gallery.ml.dbscan
 import com.karthek.android.s.gallery.state.db.SFace
 import dagger.assisted.Assisted
@@ -44,7 +44,7 @@ class ClusterFacesWorker @AssistedInject constructor(
 			embeddings.map { embedding -> Pair(embedding, SMediaItem.id) }
 		}
 		setForegroundInfo(0.25f)
-		val pair = dbscan(x, minInstances = 3)
+		val pair = dbscan(x, eps = 0.2f, minInstances = 2)
 		setForegroundInfo(0.75f)
 		repo.insertSFaces(Array(pair.second) { index -> SFace(index, "") })
 		repo.insertSFacesWithSMedia(pair.first)

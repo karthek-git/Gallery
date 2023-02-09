@@ -9,9 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.core.view.WindowCompat
-import com.karthek.android.s.gallery.c.ui.screens.ExternalMediaViewerScreen
-import com.karthek.android.s.gallery.c.ui.theme.AppTheme
 import com.karthek.android.s.gallery.state.db.SMedia
+import com.karthek.android.s.gallery.ui.screens.ExternalMediaViewerScreen
+import com.karthek.android.s.gallery.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

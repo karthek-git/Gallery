@@ -4,7 +4,7 @@ import com.karthek.android.s.gallery.state.db.SFaceSMediaCrossRef
 import kotlin.math.sqrt
 
 fun l2Norm(x: FloatArray): Float {
-	return sqrt(x.reduce { acc, fl -> (acc + (fl * fl)) })
+	return sqrt(x.fold(0f) { acc, fl -> (acc + (fl * fl)) })
 }
 
 fun dbscan(
@@ -38,11 +38,7 @@ fun dbscan(
 				val tempCp = nCp.removeLast()
 				xLabels[tempCp].faceId = label
 				xLabels[tempCp].SMediaId = x[tempCp].second
-				xNeighbours[tempCp].second.forEach { nP ->
-					if ((xNeighbours[nP].first) && (xLabels[nP].faceId == -1)) nCp.add(nP)
-					xLabels[nP].faceId = label
-					xLabels[nP].SMediaId = x[nP].second
-				}
+				xNeighbours[tempCp].second.forEach { nP -> if (xLabels[nP].faceId == -1) nCp.add(nP) }
 			}
 		}
 	}

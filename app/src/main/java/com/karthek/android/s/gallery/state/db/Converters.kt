@@ -1,7 +1,7 @@
 package com.karthek.android.s.gallery.state.db
 
 import androidx.room.TypeConverter
-import com.karthek.android.s.gallery.model.N_EMBEDDING_DIMENSIONS
+import com.karthek.android.s.gallery.ml.model.N_EMBEDDING_DIMENSIONS
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
@@ -10,7 +10,8 @@ import java.io.DataOutputStream
 class Converters {
 
 	@TypeConverter
-	fun byteArrayFromFloatArrays(floats: List<FloatArray>): ByteArray {
+	fun byteArrayFromFloatArrays(floats: List<FloatArray>?): ByteArray? {
+		floats ?: return null
 		val bas = ByteArrayOutputStream()
 		val ds = DataOutputStream(bas)
 		floats.forEach { floatArray -> floatArray.forEach { float -> ds.writeFloat(float) } }
@@ -18,7 +19,8 @@ class Converters {
 	}
 
 	@TypeConverter
-	fun floatArraysFromByteArrays(bytes: ByteArray): List<FloatArray> {
+	fun floatArraysFromByteArrays(bytes: ByteArray?): List<FloatArray>? {
+		bytes ?: return null
 		val bas = ByteArrayInputStream(bytes)
 		val ds = DataInputStream(bas)
 		val n = ((bytes.size) / (4 * N_EMBEDDING_DIMENSIONS))

@@ -9,18 +9,11 @@
 		<item name="android:background">@color/black_overlay</item>
 	</style>
 
-	<style name="smooth_image_shape">
-		<item name="cornerFamily">rounded</item>
-		<item name="cornerSize">10dp</item>
-	</style>
-
 	<style name="BlackSanUI.media_actions">
 		<item name="android:layout_marginStart">16dp</item>
 		<item name="android:layout_marginEnd">36dp</item>
 		<item name="drawableTint">@color/colorMain</item>
 		<item name="android:drawablePadding">4dp</item>
-		<item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Subtitle2
-		</item>
 	</style>
 
 	<style name="BlackSanUI.player_controls">

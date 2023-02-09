@@ -8,12 +8,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.karthek.android.s.gallery.R
-import com.karthek.android.s.gallery.c.state.Prefs
-import com.karthek.android.s.gallery.c.state.SMediaAccess
 import com.karthek.android.s.gallery.helper.createBitmap
-import com.karthek.android.s.gallery.model.CLASSIFY_ML_VERSION
-import com.karthek.android.s.gallery.model.Classify
-import com.karthek.android.s.gallery.model.FaceRecognizer
+import com.karthek.android.s.gallery.ml.model.CLASSIFY_ML_VERSION
+import com.karthek.android.s.gallery.ml.model.Classify
+import com.karthek.android.s.gallery.state.Prefs
+import com.karthek.android.s.gallery.state.SMediaAccess
 import com.karthek.android.s.gallery.state.db.SCategory
 import com.karthek.android.s.gallery.state.db.SCategorySMediaCrossRef
 import com.karthek.android.s.gallery.state.db.SMedia
@@ -22,6 +21,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import org.tensorflow.lite.support.common.FileUtil
 
 @HiltWorker
 class ClassifySMediaWorker @AssistedInject constructor(
@@ -30,7 +30,7 @@ class ClassifySMediaWorker @AssistedInject constructor(
 	private val repo: SMediaAccess,
 	private val prefs: Prefs,
 	private val classify: Classify,
-	private val faceRecognizer: FaceRecognizer,
+//	private val faceRecognizer: FaceRecognizer,
 ) : CommonWorker(appContext, params) {
 
 	override val notificationChannelId = "classify"
@@ -46,7 +46,7 @@ class ClassifySMediaWorker @AssistedInject constructor(
 			createDB()
 		}
 		notificationManager.cancel(notificationId)
-		scheduleFaceClusterWork()
+		//scheduleFaceClusterWork()
 		return Result.success()
 	}
 
@@ -60,7 +60,7 @@ class ClassifySMediaWorker @AssistedInject constructor(
 	}
 
 	private fun getBitmap(sMedia: SMedia): Bitmap? {
-		return createBitmap(sMedia, 260, 260, appContext.contentResolver)
+		return createBitmap(sMedia, 224, 224, appContext.contentResolver)
 	}
 
 	private suspend fun getSMediaToProcess(): List<SMedia> {
@@ -76,10 +76,8 @@ class ClassifySMediaWorker @AssistedInject constructor(
 	}
 
 	private suspend fun insertSCategories() {
-		val sCategories = mutableListOf<SCategory>()
-		appContext.assets.open("labels.txt").bufferedReader().useLines { lines ->
-			lines.forEachIndexed { index, s -> sCategories.add(SCategory(index, s)) }
-		}
+		val sCategories = FileUtil.loadLabels(appContext, "gic_labels.txt")
+			.mapIndexed { index, s -> SCategory(index, s) }
 		repo.insertSCategories(sCategories)
 	}
 
@@ -88,10 +86,10 @@ class ClassifySMediaWorker @AssistedInject constructor(
 		for (i in list.indices) {
 			val bitmap = getBitmap(list[i]) ?: continue
 			val classifyResult = classify.getCategory(bitmap)
-			list[i].cat = classifyResult.first
-			val sceneCategory = classifyResult.second
-			repo.insertSCategoryWithSMedia(SCategorySMediaCrossRef(sceneCategory, list[i].id))
-			list[i].faceEmbeddings = faceRecognizer.getFaceEmbeddings(bitmap)
+			classifyResult.forEach { categoryIndex ->
+				repo.insertSCategoryWithSMedia(SCategorySMediaCrossRef(categoryIndex, list[i].id))
+			}
+			//list[i].faceEmbeddings = faceRecognizer.getFaceEmbeddings(bitmap)
 			repo.insertSMedia(list[i])
 			if ((i % 1000) == 0) prefs.onLastDateChange(list[i].date)
 			setForegroundInfo(progress = i / list.size.toFloat())

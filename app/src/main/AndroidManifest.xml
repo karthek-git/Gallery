@@ -33,14 +33,10 @@
 		android:theme="@style/BlackSanUI">
 		<activity
 			android:name=".MainActivity"
-			android:exported="true" />
-		<activity
-			android:name=".c.MActivity"
 			android:exported="true"
 			android:theme="@style/BlackSanUI.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
@@ -76,7 +72,6 @@
 			android:name=".MediaViewActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize"
 			android:exported="true"
-			android:supportsPictureInPicture="true"
 			android:theme="@style/BlackSanUI.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -98,7 +93,6 @@
 			android:label="@string/title_activity_settings">
 			<intent-filter>
 				<action android:name="android.intent.action.APPLICATION_PREFERENCES" />
-
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>

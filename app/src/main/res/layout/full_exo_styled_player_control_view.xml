@@ -171,7 +171,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
-		android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+		android:textAppearance="@android:style/TextAppearance.Material.Body2"
 		app:layout_constraintEnd_toStartOf="@+id/exo_vr"
 		app:layout_constraintStart_toEndOf="@+id/capture_frame"
 		app:layout_constraintTop_toTopOf="parent"

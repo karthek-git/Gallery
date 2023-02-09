@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<application>
+		<activity
+			android:name="com.karthek.android.s.gallery.DActivity"
+			android:exported="true"
+			android:label="@string/title_activity_dactivity"
+			android:theme="@style/BlackSanUI">
+		</activity>
+	</application>
+</manifest>

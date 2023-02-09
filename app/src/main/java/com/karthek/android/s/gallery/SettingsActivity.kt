@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
-import com.karthek.android.s.gallery.c.ui.theme.AppTheme
+import com.karthek.android.s.gallery.ui.theme.AppTheme
 
 class SettingsActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {

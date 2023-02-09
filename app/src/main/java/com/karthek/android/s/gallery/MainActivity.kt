@@ -1,70 +1,67 @@
 package com.karthek.android.s.gallery
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
-import com.karthek.android.s.gallery.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.core.view.WindowCompat
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import coil.Coil
+import coil.ImageLoader
+import com.karthek.android.s.gallery.helper.SMediaIconFetcher
+import com.karthek.android.s.gallery.helper.SMediaIconKeyer
+import com.karthek.android.s.gallery.ui.screens.MainScreen
+import com.karthek.android.s.gallery.ui.theme.AppTheme
+import com.karthek.android.s.gallery.workers.CLASSIFY_WORK_NAME
+import com.karthek.android.s.gallery.workers.ClassifySMediaWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		WindowCompat.setDecorFitsSystemWindows(window, false)
+		Coil.setImageLoader {
+			ImageLoader.Builder(this)
+				.components {
+					add(SMediaIconKeyer())
+					add(SMediaIconFetcher.Factory())
+				}
+				.build()
+		}
+		schedulePeriodicWorkers()
+		setContent { ScreenContent() }
+	}
 
-    lateinit var binding: ActivityMainBinding
-    private var params: CoordinatorLayout.LayoutParams? = null
-    private var behavior = ScrollingViewBehavior()
+	@Composable
+	fun ScreenContent() {
+		AppTheme {
+			MainScreen()
+		}
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.appBar)
-        val perms = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        requestPermissions(perms, 1)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.navigation_photos, R.id.navigation_explore, R.id.navigation_media_folders
-        ).build()
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
-        if (navHostFragment != null) {
-            val navController: NavController = navHostFragment.navController
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
-            NavigationUI.setupWithNavController(binding.navView, navController)
-            params = binding.navHostFragment.layoutParams as CoordinatorLayout.LayoutParams
-            navController.addOnDestinationChangedListener { controller: NavController?, destination: NavDestination, arguments: Bundle? ->
-                if (destination.id == R.id.mediaPagerFragment) {
-                    params!!.behavior = null
-                    binding.appBar.visibility = View.GONE
-                    binding.navView.visibility = View.GONE
-                } else {
-                    params!!.behavior = behavior
-                    binding.appBar.visibility = View.VISIBLE
-                    binding.navView.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //ViewModelProvider(this).get("-1", SMediaViewModel::class.java).loadsMediaList()
-        } else {
-            onBackPressed()
-        }
-    }
+	private fun schedulePeriodicWorkers() {
+		var constraintsBuilder = Constraints.Builder()
+			.setRequiresBatteryNotLow(true)
+			.setRequiresStorageNotLow(true)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			constraintsBuilder = constraintsBuilder.setRequiresDeviceIdle(true)
+		}
+		val classifyWorkRequest =
+			PeriodicWorkRequestBuilder<ClassifySMediaWorker>(1, TimeUnit.DAYS)
+				.setConstraints(constraintsBuilder.build())
+				.build()
+		WorkManager.getInstance(applicationContext).apply {
+			enqueueUniquePeriodicWork(
+				CLASSIFY_WORK_NAME,
+				ExistingPeriodicWorkPolicy.KEEP,
+				classifyWorkRequest
+			)
+		}
+	}
 }

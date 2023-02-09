@@ -26,7 +26,7 @@
 			app:layout_constraintTop_toTopOf="@+id/audio_track_art"
 			tools:text="Some music" />
 
-		<com.google.android.material.imageview.ShapeableImageView
+		<ImageView
 			android:id="@+id/audio_track_art"
 			android:layout_width="85dp"
 			android:layout_height="86dp"
@@ -36,7 +36,6 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
-			app:shapeAppearanceOverlay="@style/smooth_image_shape"
 			app:srcCompat="@drawable/ic_audio" />
 
 		<SeekBar

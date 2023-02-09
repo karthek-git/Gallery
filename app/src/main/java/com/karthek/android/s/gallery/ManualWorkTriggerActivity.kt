@@ -9,8 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.karthek.android.s.gallery.c.ui.screens.ManualWorkTriggerScreen
-import com.karthek.android.s.gallery.c.ui.theme.AppTheme
+import com.karthek.android.s.gallery.ui.screens.ManualWorkTriggerScreen
+import com.karthek.android.s.gallery.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
