@@ -128,7 +128,7 @@ class SMediaAccess @Inject constructor(
 	}
 
 	suspend fun searchSMedia(query: String): List<SMedia> =
-		sMediaDao.findByCat(query)
+		sMediaDao.getSCategoryWithSMedia(query)?.SMediaList ?: listOf()
 
 	suspend fun insertSMedia(sMedia: SMedia) = sMediaDao.insert(sMedia)
 	suspend fun insertSFaces(sFace: Array<SFace>) = sMediaDao.insertSFaces(sFace)

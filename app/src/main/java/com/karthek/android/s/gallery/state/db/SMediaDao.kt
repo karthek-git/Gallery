@@ -47,4 +47,8 @@ interface SMediaDao {
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insertSCategoryWithSMedia(sCategorySMediaCrossRef: SCategorySMediaCrossRef)
+
+	@Transaction
+	@Query("SELECT * FROM SCategory WHERE name LIKE '%' || :cat || '%'")
+	suspend fun getSCategoryWithSMedia(cat: String): SCategoryWithSMedia?
 }
