@@ -77,8 +77,8 @@ fun SMediaInfoItem(
 	icon: ImageVector,
 ) {
 	ListItem(
-		headlineText = { Text(text = headLineText, fontWeight = FontWeight.SemiBold) },
-		supportingText = {
+		headlineContent = { Text(text = headLineText, fontWeight = FontWeight.SemiBold) },
+		supportingContent = {
 			Text(
 				text = supportingText,
 				style = MaterialTheme.typography.bodyMedium
@@ -96,7 +96,7 @@ fun SMediaInfoItem(
 	icon: ImageVector,
 ) {
 	ListItem(
-		headlineText = {
+		headlineContent = {
 			Text(text = headLineText, fontWeight = FontWeight.SemiBold, style = style)
 		},
 		leadingContent = { Icon(imageVector = icon, contentDescription = "") },
