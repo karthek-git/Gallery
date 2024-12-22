@@ -2,9 +2,19 @@ package com.karthek.android.s.gallery.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -32,7 +42,7 @@ fun ManualWorkTriggerScreen(viewModel: ManualWorkTriggerViewModel = viewModel())
 
 @Composable
 fun ManualWorkTriggerScreenContent(
-	workProgress: LiveData<MutableList<WorkInfo>>, onTriggerClick: () -> Unit, onConfirm: () -> Unit
+	workProgress: LiveData<List<WorkInfo>>, onTriggerClick: () -> Unit, onConfirm: () -> Unit
 ) {
 	Column(
 		modifier = Modifier.fillMaxSize(),

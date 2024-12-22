@@ -208,7 +208,7 @@ fun BoxScope.SMediaViewControls(
 					Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = "")
 				}
 			},
-			colors = TopAppBarDefaults.smallTopAppBarColors(
+			colors = TopAppBarDefaults.topAppBarColors(
 				containerColor = Color.Black,
 				navigationIconContentColor = LocalContentColor.current,
 				actionIconContentColor = LocalContentColor.current

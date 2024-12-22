@@ -23,7 +23,7 @@ class Classify @Inject constructor(@ApplicationContext context: Context) {
 	private val probabilityPostProcessor: TensorProcessor
 
 	init {
-		val options = Model.Options.Builder().setDevice(Model.Device.CPU).build()
+		val options = Model.Options.Builder().setDevice(Model.Device.NNAPI).build()
 		model = Model.createModel(context, "gic_uint8_v1.tflite", options)
 
 		val iQuantizationParams = model.getInputTensor(0).quantizationParams()

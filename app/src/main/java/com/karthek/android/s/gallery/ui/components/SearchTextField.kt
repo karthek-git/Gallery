@@ -9,7 +9,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,7 +38,7 @@ fun SearchTextField(value: String, onValueChange: (String) -> Unit, onSearchActi
 		value = value,
 		onValueChange = onValueChange,
 		singleLine = true,
-		colors = TextFieldDefaults.textFieldColors(
+		colors = TextFieldDefaults.colors(
 			unfocusedIndicatorColor = Color.Transparent, focusedIndicatorColor = Color.Transparent
 		),
 		placeholder = { Text(text = stringResource(id = R.string.search_go)) },

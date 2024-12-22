@@ -67,7 +67,7 @@ class ImageInfScreenViewModel @Inject constructor(private val appContext: Applic
 
 	private fun runClassify(): String {
 		var ret = "Nothing"
-		val options = Model.Options.Builder().setDevice(Model.Device.CPU).build()
+		val options = Model.Options.Builder().setDevice(Model.Device.NNAPI).build()
 		try {
 			val model = Model.createModel(appContext, "gic_uint8_v1.tflite", options)
 
