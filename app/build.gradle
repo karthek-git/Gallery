@@ -22,7 +22,7 @@ android {
         applicationId "com.karthek.android.s.gallery"
         minSdk 21
         targetSdk 35
-        versionCode 14
+        versionCode 15
         versionName "0.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
