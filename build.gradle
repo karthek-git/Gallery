@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        hilt_version = '2.47'
+        hilt_version = '2.57.1'
         compose_version = '1.2.0'
     }
     repositories {
@@ -9,11 +9,11 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.5"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21"
+        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.9.3"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
-        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:10.7.0"
+        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:12.2.4"
     }
 }
 
